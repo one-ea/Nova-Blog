@@ -29,7 +29,7 @@
             </div>
             <?php endif; ?>
 
-            <h3 class="post-card__title text-title-large"><?php the_title(); ?></h3>
+            <h2 class="post-card__title text-title-large"><?php the_title(); ?></h2>
         </div>
 
         <div class="md-card__content post-card__content">

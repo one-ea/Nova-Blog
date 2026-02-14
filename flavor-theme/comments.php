@@ -14,7 +14,7 @@ if ( post_password_required() ) return;
     </ol>
     <?php the_comments_navigation( [ 'prev_text' => __( '&larr; Older Comments', 'flavor' ), 'next_text' => __( 'Newer Comments &rarr;', 'flavor' ) ] ); ?>
     <?php if ( ! comments_open() ) : ?>
-    <p class="no-comments text-body-medium text-on-surface-variant" style="padding:16px;background:var(--md-sys-color-surface-container);border-radius:var(--md-sys-shape-corner-medium);">
+    <p class="no-comments text-body-medium text-on-surface-variant comments-closed">
         <?php esc_html_e( 'Comments are closed.', 'flavor' ); ?>
     </p>
     <?php endif; ?>

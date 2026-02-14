@@ -1,6 +1,6 @@
 <?php
 // 主题常量
-define('FLAVOR_VERSION', '2.0.0');
+define('FLAVOR_VERSION', '2.1.0');
 define('FLAVOR_DIR', get_template_directory());
 define('FLAVOR_URI', get_template_directory_uri());
 
@@ -9,6 +9,7 @@ require_once FLAVOR_DIR . '/inc/theme-support.php';
 require_once FLAVOR_DIR . '/inc/enqueue.php';
 require_once FLAVOR_DIR . '/inc/customizer.php';
 require_once FLAVOR_DIR . '/inc/widgets.php';
+require_once FLAVOR_DIR . '/inc/seo.php';
 require_once FLAVOR_DIR . '/inc/block-patterns.php';
 require_once FLAVOR_DIR . '/inc/block-styles.php';
 require_once FLAVOR_DIR . '/inc/walker-comment.php';

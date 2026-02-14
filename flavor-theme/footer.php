@@ -22,6 +22,35 @@
             </div>
         </div>
     </div>
+    <?php else : ?>
+    <!-- Footer 默认内容（未配置 widget 时显示） -->
+    <div class="footer-default">
+        <div class="container">
+            <div class="footer-default__grid">
+                <div>
+                    <h3 class="footer-default__section-title"><?php bloginfo('name'); ?></h3>
+                    <p class="footer-default__description"><?php bloginfo('description'); ?></p>
+                </div>
+                <div>
+                    <h3 class="footer-default__section-title"><?php esc_html_e('Recent Posts', 'flavor'); ?></h3>
+                    <ul>
+                        <?php
+                        $recent = new WP_Query(['posts_per_page' => 5, 'no_found_rows' => true]);
+                        while ($recent->have_posts()) : $recent->the_post();
+                        ?>
+                        <li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></li>
+                        <?php endwhile; wp_reset_postdata(); ?>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="footer-default__section-title"><?php esc_html_e('Categories', 'flavor'); ?></h3>
+                    <ul>
+                        <?php wp_list_categories(['title_li' => '', 'show_count' => true]); ?>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
     <?php endif; ?>
 
     <div class="container">

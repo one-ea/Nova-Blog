@@ -891,6 +891,24 @@
   border-radius: var(--md-sys-shape-corner-full);
 }
 
+.md-snackbar__message {
+  flex: 1;
+  padding: 14px 0;
+}
+
+/* Snackbar animation (used by navigation.js) */
+.snackbar-container .md-snackbar {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+              transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
+}
+
+.snackbar-container .md-snackbar--show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* ==========================================================================
    11. Dialog
    ========================================================================== */
