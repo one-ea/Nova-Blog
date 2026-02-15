@@ -1,10 +1,9 @@
 <?php
 function flavor_enqueue_scripts() {
-    // CSS: tokens → base → components → theme → style.css
-    // Roboto 已自托管在 base.css 的 @font-face 中
-    wp_enqueue_style('flavor-tokens', FLAVOR_URI . '/assets/css/tokens.css', [], FLAVOR_VERSION);
-    wp_enqueue_style('flavor-base', FLAVOR_URI . '/assets/css/base.css', ['flavor-tokens'], FLAVOR_VERSION);
-    wp_enqueue_style('flavor-components', FLAVOR_URI . '/assets/css/components.css', ['flavor-tokens'], FLAVOR_VERSION);
+    // CSS: tokens(内联) → base + components(并行) → theme → style.css
+    // tokens.css 已内联到 <head>，无需加载
+    wp_enqueue_style('flavor-base', FLAVOR_URI . '/assets/css/base.css', [], FLAVOR_VERSION);
+    wp_enqueue_style('flavor-components', FLAVOR_URI . '/assets/css/components.css', [], FLAVOR_VERSION);
     wp_enqueue_style('flavor-theme', FLAVOR_URI . '/assets/css/theme.css', ['flavor-base', 'flavor-components'], FLAVOR_VERSION);
     wp_enqueue_style('flavor-style', get_stylesheet_uri(), ['flavor-theme'], FLAVOR_VERSION);
 
@@ -46,7 +45,6 @@ function flavor_preload_assets() {
     // 异步加载 Noto Sans SC（中文字体太大，不自托管）
     echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
     echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
-    echo '<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap">' . "\n";
     echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" media="print" onload="this.media=\'all\'">' . "\n";
     echo '<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap"></noscript>' . "\n";
 }
@@ -54,6 +52,13 @@ add_action('wp_head', 'flavor_preload_assets', 1);
 
 // 主题色初始化（防闪烁）+ 关键 CSS 内联
 function flavor_inline_critical() {
+    // 内联 tokens.css（纯 CSS 变量，省一个 HTTP 请求加速 FCP）
+    $tokens_file = FLAVOR_DIR . '/assets/css/tokens.css';
+    if (file_exists($tokens_file)) {
+        echo '<style id="flavor-tokens-inline">' . "\n";
+        echo file_get_contents($tokens_file);
+        echo '</style>' . "\n";
+    }
     echo '<script>
     (function(){
         var t = localStorage.getItem("flavor-theme") || "auto";

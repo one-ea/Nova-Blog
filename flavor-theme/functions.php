@@ -1,6 +1,6 @@
 <?php
 // 主题常量
-define('FLAVOR_VERSION', '2.1.0');
+define('FLAVOR_VERSION', '2.2.0');
 define('FLAVOR_DIR', get_template_directory());
 define('FLAVOR_URI', get_template_directory_uri());
 
