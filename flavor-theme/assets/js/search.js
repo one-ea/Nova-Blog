@@ -7,7 +7,7 @@
   'use strict';
 
   /** 配置 */
-  const DEBOUNCE_MS = 300;
+  const DEBOUNCE_MS = 180;
   const API_ENDPOINT = '/wp-json/wp/v2/search';
   const MIN_QUERY_LENGTH = 2;
 
@@ -72,7 +72,11 @@
 
     const url = API_ENDPOINT + '?search=' + encodeURIComponent(query) + '&per_page=8&_fields=id,title,url,type,subtype';
 
-    fetch(url, { signal: abortController.signal })
+    const headers = (typeof flavorData !== 'undefined' && flavorData.nonce)
+      ? { 'X-WP-Nonce': flavorData.nonce }
+      : {};
+
+    fetch(url, { signal: abortController.signal, headers: headers })
       .then(function (res) {
         if (!res.ok) throw new Error('Search request failed');
         return res.json();
@@ -142,8 +146,8 @@
       return;
     }
 
-    suggestions.forEach(function (item, index) {
-      var li = document.createElement('li');
+    suggestions.forEach((item, index) => {
+      const li = document.createElement('li');
       li.className = 'search-suggestion';
       li.setAttribute('role', 'option');
       li.setAttribute('data-index', String(index));
@@ -151,24 +155,24 @@
 
       // 类型标签
       if (item.subtype) {
-        var badge = document.createElement('span');
+        const badge = document.createElement('span');
         badge.className = 'search-suggestion__type';
         badge.textContent = item.subtype;
         li.appendChild(badge);
       }
 
       // 标题（带高亮）
-      var titleSpan = document.createElement('span');
+      const titleSpan = document.createElement('span');
       titleSpan.className = 'search-suggestion__title';
-      var titleText = item.title || '';
+      let titleText = item.title || '';
       // WP REST API 返回的 title 可能是 rendered 对象
       if (typeof titleText === 'object' && titleText.rendered) {
         titleText = titleText.rendered;
       }
       // 去除 HTML 标签
-      var tempDiv = document.createElement('div');
+      const tempDiv = document.createElement('div');
       tempDiv.textContent = titleText;
-      var cleanTitle = tempDiv.textContent;
+      const cleanTitle = tempDiv.textContent;
 
       titleSpan.appendChild(highlightMatch(cleanTitle, query));
       li.appendChild(titleSpan);
@@ -203,7 +207,7 @@
   // ─── 键盘导航 ─────────────────────────────────────
 
   function onInputKeyDown(e) {
-    var items = suggestionsContainer ? suggestionsContainer.querySelectorAll('.search-suggestion:not(.search-suggestion--empty)') : [];
+    const items = suggestionsContainer ? suggestionsContainer.querySelectorAll('.search-suggestion:not(.search-suggestion--empty)') : [];
 
     switch (e.key) {
       case 'ArrowDown':
@@ -258,7 +262,7 @@
 
   function onInput() {
     clearTimeout(debounceTimer);
-    var query = searchInput ? searchInput.value.trim() : '';
+    const query = searchInput ? searchInput.value.trim() : '';
 
     if (query.length < MIN_QUERY_LENGTH) {
       clearSuggestions();
@@ -289,7 +293,7 @@
 
   function init() {
     searchToggle = document.querySelector('.search-toggle-btn');
-    var searchToggleMobile = document.querySelector('.search-toggle-btn-mobile');
+    const searchToggleMobile = document.querySelector('.search-toggle-btn-mobile');
     searchBar = document.querySelector('.search-overlay');
     searchInput = searchBar ? searchBar.querySelector('.md-search-bar__input') : null;
     suggestionsContainer = searchBar ? searchBar.querySelector('.search-overlay__suggestions') : null;
@@ -309,7 +313,7 @@
     }
 
     // Close button inside overlay
-    var backBtn = searchBar ? searchBar.querySelector('.search-overlay__back') : null;
+    const backBtn = searchBar ? searchBar.querySelector('.search-overlay__back') : null;
     if (backBtn) {
       backBtn.addEventListener('click', function (e) {
         e.stopPropagation();

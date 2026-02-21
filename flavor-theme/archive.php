@@ -13,9 +13,14 @@ get_header();
 
     <?php if (is_category()) : ?>
     <div class="category-chips">
-        <a href="<?php echo esc_url(home_url('/')); ?>" class="md-chip-filter"><?php esc_html_e('All', 'flavor'); ?></a>
+        <a href="<?php echo esc_url(home_url('/')); ?>" class="md-chip-filter"><?php esc_html_e('全部', 'flavor'); ?></a>
         <?php
-        $categories = get_categories(['hide_empty' => true]);
+        // Transient 缓存分类列表
+        $categories = get_transient('flavor_categories_cache');
+        if (false === $categories) {
+            $categories = get_categories(['hide_empty' => true]);
+            set_transient('flavor_categories_cache', $categories, HOUR_IN_SECONDS);
+        }
         foreach ($categories as $cat) :
             $is_current = is_category($cat->term_id) ? 'md-chip-filter--selected' : '';
         ?>
@@ -33,7 +38,7 @@ get_header();
         <?php endwhile; ?>
     </div>
 
-    <nav class="pagination" aria-label="<?php esc_attr_e('Posts navigation', 'flavor'); ?>">
+    <nav class="pagination" aria-label="<?php esc_attr_e('文章导航', 'flavor'); ?>">
         <?php echo paginate_links([
             'prev_text' => '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>',
             'next_text' => '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>',
@@ -42,7 +47,7 @@ get_header();
     </nav>
     <?php else : ?>
     <div class="no-results">
-        <h2 class="text-headline-medium"><?php esc_html_e('No posts found', 'flavor'); ?></h2>
+        <h2 class="text-headline-medium"><?php esc_html_e('暂无文章', 'flavor'); ?></h2>
     </div>
     <?php endif; ?>
 </div>

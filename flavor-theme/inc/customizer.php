@@ -2,7 +2,7 @@
 function flavor_customize_register($wp_customize) {
     // === 颜色与外观 ===
     $wp_customize->add_section('flavor_colors', [
-        'title' => __('Colors & Appearance', 'flavor'),
+        'title' => __('颜色与外观', 'flavor'),
         'priority' => 30,
     ]);
 
@@ -13,8 +13,8 @@ function flavor_customize_register($wp_customize) {
         'transport' => 'postMessage',
     ]);
     $wp_customize->add_control(new WP_Customize_Color_Control($wp_customize, 'flavor_seed_color', [
-        'label' => __('Seed Color', 'flavor'),
-        'description' => __('Choose a seed color to generate the entire color scheme.', 'flavor'),
+        'label' => __('种子色', 'flavor'),
+        'description' => __('选择一个种子色来生成整套配色方案。', 'flavor'),
         'section' => 'flavor_colors',
     ]));
 
@@ -24,19 +24,19 @@ function flavor_customize_register($wp_customize) {
         'sanitize_callback' => 'flavor_sanitize_select',
     ]);
     $wp_customize->add_control('flavor_dark_mode', [
-        'label' => __('Dark Mode', 'flavor'),
+        'label' => __('深色模式', 'flavor'),
         'section' => 'flavor_colors',
         'type' => 'select',
         'choices' => [
-            'auto' => __('Follow System', 'flavor'),
-            'light' => __('Always Light', 'flavor'),
-            'dark' => __('Always Dark', 'flavor'),
+            'auto' => __('跟随系统', 'flavor'),
+            'light' => __('始终浅色', 'flavor'),
+            'dark' => __('始终深色', 'flavor'),
         ],
     ]);
 
     // === 布局 ===
     $wp_customize->add_section('flavor_layout', [
-        'title' => __('Layout', 'flavor'),
+        'title' => __('布局', 'flavor'),
         'priority' => 35,
     ]);
 
@@ -46,13 +46,13 @@ function flavor_customize_register($wp_customize) {
         'sanitize_callback' => 'flavor_sanitize_select',
     ]);
     $wp_customize->add_control('flavor_home_layout', [
-        'label' => __('Homepage Layout', 'flavor'),
+        'label' => __('首页布局', 'flavor'),
         'section' => 'flavor_layout',
         'type' => 'select',
         'choices' => [
-            'classic' => __('Classic Blog', 'flavor'),
-            'magazine' => __('Magazine Grid', 'flavor'),
-            'minimal' => __('Minimal', 'flavor'),
+            'classic' => __('经典博客', 'flavor'),
+            'magazine' => __('杂志网格', 'flavor'),
+            'minimal' => __('极简', 'flavor'),
         ],
     ]);
 
@@ -62,13 +62,13 @@ function flavor_customize_register($wp_customize) {
         'sanitize_callback' => 'flavor_sanitize_select',
     ]);
     $wp_customize->add_control('flavor_sidebar_position', [
-        'label' => __('Sidebar Position', 'flavor'),
+        'label' => __('侧边栏位置', 'flavor'),
         'section' => 'flavor_layout',
         'type' => 'select',
         'choices' => [
-            'right' => __('Right', 'flavor'),
-            'left' => __('Left', 'flavor'),
-            'none' => __('No Sidebar', 'flavor'),
+            'right' => __('右侧', 'flavor'),
+            'left' => __('左侧', 'flavor'),
+            'none' => __('无侧边栏', 'flavor'),
         ],
     ]);
 
@@ -78,26 +78,26 @@ function flavor_customize_register($wp_customize) {
         'sanitize_callback' => 'flavor_sanitize_select',
     ]);
     $wp_customize->add_control('flavor_content_width', [
-        'label' => __('Content Width', 'flavor'),
+        'label' => __('内容宽度', 'flavor'),
         'section' => 'flavor_layout',
         'type' => 'select',
         'choices' => [
-            'narrow' => __('Narrow (720px)', 'flavor'),
-            'standard' => __('Standard (840px)', 'flavor'),
-            'wide' => __('Wide (960px)', 'flavor'),
+            'narrow' => __('窄（720px）', 'flavor'),
+            'standard' => __('标准（840px）', 'flavor'),
+            'wide' => __('宽（960px）', 'flavor'),
         ],
     ]);
 
     // === 文章设置 ===
     $wp_customize->add_section('flavor_post', [
-        'title' => __('Post Settings', 'flavor'),
+        'title' => __('文章设置', 'flavor'),
         'priority' => 40,
     ]);
 
     // 阅读时间
     $wp_customize->add_setting('flavor_show_reading_time', ['default' => true, 'sanitize_callback' => 'flavor_sanitize_checkbox']);
     $wp_customize->add_control('flavor_show_reading_time', [
-        'label' => __('Show Reading Time', 'flavor'),
+        'label' => __('显示阅读时间', 'flavor'),
         'section' => 'flavor_post',
         'type' => 'checkbox',
     ]);
@@ -105,7 +105,7 @@ function flavor_customize_register($wp_customize) {
     // TOC
     $wp_customize->add_setting('flavor_show_toc', ['default' => true, 'sanitize_callback' => 'flavor_sanitize_checkbox']);
     $wp_customize->add_control('flavor_show_toc', [
-        'label' => __('Show Table of Contents', 'flavor'),
+        'label' => __('显示文章目录', 'flavor'),
         'section' => 'flavor_post',
         'type' => 'checkbox',
     ]);
@@ -113,7 +113,7 @@ function flavor_customize_register($wp_customize) {
     // 相关文章数量
     $wp_customize->add_setting('flavor_related_posts_count', ['default' => 3, 'sanitize_callback' => 'absint']);
     $wp_customize->add_control('flavor_related_posts_count', [
-        'label' => __('Related Posts Count', 'flavor'),
+        'label' => __('相关文章数量', 'flavor'),
         'section' => 'flavor_post',
         'type' => 'number',
         'input_attrs' => ['min' => 0, 'max' => 6],
@@ -121,7 +121,7 @@ function flavor_customize_register($wp_customize) {
 
     // === 页脚 ===
     $wp_customize->add_section('flavor_footer', [
-        'title' => __('Footer', 'flavor'),
+        'title' => __('页脚', 'flavor'),
         'priority' => 50,
     ]);
 
@@ -130,7 +130,7 @@ function flavor_customize_register($wp_customize) {
         'sanitize_callback' => 'wp_kses_post',
     ]);
     $wp_customize->add_control('flavor_footer_text', [
-        'label' => __('Footer Text', 'flavor'),
+        'label' => __('页脚文本', 'flavor'),
         'section' => 'flavor_footer',
         'type' => 'textarea',
     ]);

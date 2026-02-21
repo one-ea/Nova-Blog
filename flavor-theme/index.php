@@ -8,6 +8,13 @@ get_header();
     <?php if (is_home() && !is_paged()) : ?>
     <!-- Hero Section -->
     <section class="hero-section">
+        <div class="hero-blobs" aria-hidden="true">
+            <div class="hero-blob hero-blob--1"></div>
+            <div class="hero-blob hero-blob--2"></div>
+            <div class="hero-blob hero-blob--3"></div>
+            <div class="hero-blob hero-blob--4"></div>
+            <div class="hero-blob hero-blob--5"></div>
+        </div>
         <h1 class="hero-section__title"><?php bloginfo('name'); ?></h1>
         <p class="hero-section__subtitle"><?php bloginfo('description'); ?></p>
     </section>
@@ -37,7 +44,7 @@ get_header();
     <!-- Category Filter Chips -->
     <div class="category-chips">
         <a href="<?php echo esc_url(home_url('/')); ?>" class="md-chip-filter <?php echo !is_category() ? 'md-chip-filter--selected' : ''; ?>">
-            <?php esc_html_e('All', 'flavor'); ?>
+            <?php esc_html_e('全部', 'flavor'); ?>
         </a>
         <?php
         $categories = get_categories(['hide_empty' => true]);
@@ -59,7 +66,7 @@ get_header();
     </div>
 
     <!-- Pagination -->
-    <nav class="pagination" aria-label="<?php esc_attr_e('Posts navigation', 'flavor'); ?>">
+    <nav class="pagination" aria-label="<?php esc_attr_e('文章导航', 'flavor'); ?>">
         <?php
         echo paginate_links([
             'prev_text' => '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>',
@@ -71,8 +78,8 @@ get_header();
 
     <?php else : ?>
     <div class="no-results">
-        <h2 class="text-headline-medium"><?php esc_html_e('No posts found', 'flavor'); ?></h2>
-        <p class="text-body-large text-on-surface-variant"><?php esc_html_e('Try a different search or browse categories.', 'flavor'); ?></p>
+        <h2 class="text-headline-medium"><?php esc_html_e('暂无文章', 'flavor'); ?></h2>
+        <p class="text-body-large text-on-surface-variant"><?php esc_html_e('试试其他关键词或浏览分类目录。', 'flavor'); ?></p>
     </div>
     <?php endif; ?>
 

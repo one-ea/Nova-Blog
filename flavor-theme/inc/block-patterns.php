@@ -1,12 +1,12 @@
 <?php
 function flavor_register_block_patterns() {
     register_block_pattern_category('flavor', [
-        'label' => __('Flavor Theme', 'flavor'),
+        'label' => __('Flavor 主题', 'flavor'),
     ]);
 
     // Hero Pattern
     register_block_pattern('flavor/hero', [
-        'title' => __('Hero Section', 'flavor'),
+        'title' => __('英雄区块', 'flavor'),
         'categories' => ['flavor'],
         'content' => '<!-- wp:group {"className":"flavor-hero","style":{"spacing":{"padding":{"top":"80px","bottom":"80px"}}}} -->
 <div class="wp-block-group flavor-hero" style="padding-top:80px;padding-bottom:80px">
@@ -29,7 +29,7 @@ function flavor_register_block_patterns() {
 
     // Card Grid Pattern
     register_block_pattern('flavor/card-grid', [
-        'title' => __('Card Grid', 'flavor'),
+        'title' => __('卡片网格', 'flavor'),
         'categories' => ['flavor'],
         'content' => '<!-- wp:columns {"className":"grid grid--3"} -->
 <div class="wp-block-columns grid grid--3">

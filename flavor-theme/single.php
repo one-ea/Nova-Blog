@@ -40,7 +40,7 @@ get_header();
                         <span><?php echo esc_html(flavor_reading_time()); ?></span>
                         <?php endif; ?>
                         <span class="meta-separator">·</span>
-                        <span><?php printf(__('%d views', 'flavor'), flavor_get_post_views()); ?></span>
+                        <span><?php printf(__('%d 次浏览', 'flavor'), flavor_get_post_views()); ?></span>
                     </div>
                 </div>
             </div>
@@ -60,7 +60,7 @@ get_header();
                 <?php the_content(); ?>
                 <?php
                 wp_link_pages([
-                    'before' => '<nav class="page-links flex gap-8 mt-24"><span class="text-label-large">' . __('Pages:', 'flavor') . '</span>',
+                    'before' => '<nav class="page-links flex gap-8 mt-24"><span class="text-label-large">' . __('页码：', 'flavor') . '</span>',
                     'after' => '</nav>',
                 ]);
                 ?>
@@ -68,10 +68,7 @@ get_header();
 
             <?php if (get_theme_mod('flavor_show_toc', true)) : ?>
             <aside class="post-toc">
-                <div class="toc-container">
-                    <h3 class="text-title-small mb-16"><?php esc_html_e('Table of Contents', 'flavor'); ?></h3>
-                    <nav class="toc-nav" aria-label="<?php esc_attr_e('Table of contents', 'flavor'); ?>"></nav>
-                </div>
+                <div class="toc-container"></div>
             </aside>
             <?php endif; ?>
         </div>
@@ -94,11 +91,11 @@ get_header();
             <div class="post-actions__left">
                 <button class="md-button-tonal md-ripple post-like-btn">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M16.5 3c-1.74 0-3.41.81-4.5 2.09C10.91 3.81 9.24 3 7.5 3 4.42 3 2 5.42 2 8.5c0 3.78 3.4 6.86 8.55 11.54L12 21.35l1.45-1.32C18.6 15.36 22 12.28 22 8.5 22 5.42 19.58 3 16.5 3zm-4.4 15.55l-.1.1-.1-.1C7.14 14.24 4 11.39 4 8.5 4 6.5 5.5 5 7.5 5c1.54 0 3.04.99 3.57 2.36h1.87C13.46 5.99 14.96 5 16.5 5c2 0 3.5 1.5 3.5 3.5 0 2.89-3.14 5.74-7.9 10.05z"/></svg>
-                    <span><?php esc_html_e('Like', 'flavor'); ?></span>
+                    <span><?php esc_html_e('点赞', 'flavor'); ?></span>
                 </button>
                 <button class="md-button-tonal md-ripple post-share-btn">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92s-1.31-2.92-2.92-2.92z"/></svg>
-                    <span><?php esc_html_e('Share', 'flavor'); ?></span>
+                    <span><?php esc_html_e('分享', 'flavor'); ?></span>
                 </button>
             </div>
             <div class="post-actions__right">
@@ -106,12 +103,12 @@ get_header();
                 <?php if ($prev_post) : ?>
                 <a href="<?php echo esc_url(get_permalink($prev_post)); ?>" class="md-button-text md-ripple" title="<?php echo esc_attr($prev_post->post_title); ?>">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
-                    <span><?php esc_html_e('Previous', 'flavor'); ?></span>
+                    <span><?php esc_html_e('上一篇', 'flavor'); ?></span>
                 </a>
                 <?php endif; ?>
                 <?php if ($next_post) : ?>
                 <a href="<?php echo esc_url(get_permalink($next_post)); ?>" class="md-button-text md-ripple" title="<?php echo esc_attr($next_post->post_title); ?>">
-                    <span><?php esc_html_e('Next', 'flavor'); ?></span>
+                    <span><?php esc_html_e('下一篇', 'flavor'); ?></span>
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
                 </a>
                 <?php endif; ?>
@@ -133,7 +130,7 @@ get_header();
             if ($related->have_posts()) :
         ?>
         <section class="related-posts">
-            <h2 class="related-posts__title"><?php esc_html_e('Related Posts', 'flavor'); ?></h2>
+            <h2 class="related-posts__title"><?php esc_html_e('相关文章', 'flavor'); ?></h2>
             <div class="related-posts__grid">
                 <?php while ($related->have_posts()) : $related->the_post(); ?>
                     <?php get_template_part('template-parts/content', 'card'); ?>

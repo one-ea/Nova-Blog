@@ -12,14 +12,14 @@ class Flavor_Walker_Comment extends Walker_Comment {
             <article class="comment-body">
                 <header class="comment-header flex items-center gap-16">
                     <div class="comment-avatar">
-                        <?php echo get_avatar( $comment, 40, '', '', [ 'class' => 'avatar-circle' ] ); ?>
+                        <?php echo get_avatar( $comment, 48, '', '', [ 'class' => 'avatar-circle' ] ); ?>
                     </div>
                     <div class="comment-meta">
                         <span class="comment-author text-title-small"><?php comment_author_link( $comment ); ?></span>
                         <time class="comment-date text-label-medium text-on-surface-variant" datetime="<?php comment_time( 'c' ); ?>">
                             <?php
                             printf(
-                                __( '%1$s at %2$s', 'flavor' ),
+                                __( '%1$s 于 %2$s', 'flavor' ),
                                 get_comment_date( '', $comment ),
                                 get_comment_time()
                             );
@@ -31,7 +31,7 @@ class Flavor_Walker_Comment extends Walker_Comment {
                 <div class="comment-content text-body-medium">
                     <?php if ( '0' == $comment->comment_approved ) : ?>
                         <p class="comment-awaiting-moderation text-label-medium">
-                            <?php esc_html_e( 'Your comment is awaiting moderation.', 'flavor' ); ?>
+                            <?php esc_html_e( '您的评论正在等待审核。', 'flavor' ); ?>
                         </p>
                     <?php endif; ?>
                     <?php comment_text(); ?>
@@ -46,7 +46,7 @@ class Flavor_Walker_Comment extends Walker_Comment {
                         'before'    => '<span class="reply-link">',
                         'after'     => '</span>',
                     ] ) );
-                    edit_comment_link( __( 'Edit', 'flavor' ), '<span class="edit-link">', '</span>' );
+                    edit_comment_link( __( '编辑', 'flavor' ), '<span class="edit-link">', '</span>' );
                     ?>
                 </footer>
             </article>

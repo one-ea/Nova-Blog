@@ -38,12 +38,19 @@
             </p>
         </div>
 
-        <div class="md-card__actions post-card__footer flex items-center gap-8">
-            <?php echo get_avatar(get_the_author_meta('ID'), 24, '', '', ['class' => 'avatar-circle']); ?>
-            <span class="text-label-medium"><?php the_author(); ?></span>
-            <span class="text-label-medium text-on-surface-variant ml-auto">
-                <?php echo get_the_date(); ?>
-            </span>
+        <div class="post-card__footer">
+            <?php echo get_avatar(get_the_author_meta('ID'), 32, '', '', ['class' => 'avatar-circle']); ?>
+            <div class="post-card__footer-meta">
+                <div class="post-card__footer-top">
+                    <span class="post-card__author"><?php the_author(); ?></span>
+                    <time class="post-card__date" datetime="<?php echo get_the_date('c'); ?>"><?php echo get_the_date(); ?></time>
+                </div>
+                <div class="post-card__footer-bottom">
+                    <span><?php echo esc_html(flavor_reading_time()); ?></span>
+                    <span class="post-card__meta-sep">·</span>
+                    <span><?php printf(__('%d 次浏览', 'flavor'), flavor_get_post_views()); ?></span>
+                </div>
+            </div>
         </div>
 
     </a>

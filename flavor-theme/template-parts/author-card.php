@@ -19,7 +19,7 @@ $author_description = get_the_author_meta( 'description' );
             <p class="text-body-medium text-on-surface-variant mt-4"><?php echo esc_html( $author_description ); ?></p>
             <?php endif; ?>
             <div class="text-label-medium text-on-surface-variant mt-8">
-                <?php printf( esc_html( _n( '%d article', '%d articles', $author_posts_count, 'flavor' ) ), $author_posts_count ); ?>
+                <?php printf( esc_html( _n( '%d 篇文章', '%d 篇文章', $author_posts_count, 'flavor' ) ), $author_posts_count ); ?>
             </div>
         </div>
     </div>

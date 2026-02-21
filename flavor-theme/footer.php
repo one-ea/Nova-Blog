@@ -32,18 +32,27 @@
                     <p class="footer-default__description"><?php bloginfo('description'); ?></p>
                 </div>
                 <div>
-                    <h3 class="footer-default__section-title"><?php esc_html_e('Recent Posts', 'flavor'); ?></h3>
+                    <h3 class="footer-default__section-title"><?php esc_html_e('最新文章', 'flavor'); ?></h3>
                     <ul>
                         <?php
-                        $recent = new WP_Query(['posts_per_page' => 5, 'no_found_rows' => true]);
-                        while ($recent->have_posts()) : $recent->the_post();
+                        // Transient 缓存，1 小时过期，减少数据库查询
+                        $recent_posts = get_transient('flavor_footer_recent');
+                        if (false === $recent_posts) {
+                            $recent_posts = get_posts([
+                                'numberposts'  => 5,
+                                'post_status'  => 'publish',
+                                'no_found_rows' => true,
+                            ]);
+                            set_transient('flavor_footer_recent', $recent_posts, HOUR_IN_SECONDS);
+                        }
+                        foreach ($recent_posts as $rpost) :
                         ?>
-                        <li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></li>
-                        <?php endwhile; wp_reset_postdata(); ?>
+                        <li><a href="<?php echo esc_url(get_permalink($rpost)); ?>"><?php echo esc_html($rpost->post_title); ?></a></li>
+                        <?php endforeach; ?>
                     </ul>
                 </div>
                 <div>
-                    <h3 class="footer-default__section-title"><?php esc_html_e('Categories', 'flavor'); ?></h3>
+                    <h3 class="footer-default__section-title"><?php esc_html_e('分类目录', 'flavor'); ?></h3>
                     <ul>
                         <?php wp_list_categories(['title_li' => '', 'show_count' => true]); ?>
                     </ul>
@@ -62,17 +71,17 @@
                     echo wp_kses_post($footer_text);
                 } else {
                     printf(
-                        esc_html__('© %1$s %2$s. Powered by %3$s & %4$s.', 'flavor'),
+                        esc_html__('© %1$s %2$s. 由 %3$s 和 %4$s 驱动。', 'flavor'),
                         date('Y'),
                         get_bloginfo('name'),
                         '<a href="https://wordpress.org">WordPress</a>',
-                        '<a href="#">Flavor Theme</a>'
+                        '<a href="https://github.com/flavor-theme">Flavor Theme</a>'
                     );
                 }
                 ?>
             </div>
             <?php if (has_nav_menu('footer')) : ?>
-            <nav class="footer-nav" aria-label="<?php esc_attr_e('Footer navigation', 'flavor'); ?>">
+            <nav class="footer-nav" aria-label="<?php esc_attr_e('页脚导航', 'flavor'); ?>">
                 <?php wp_nav_menu([
                     'theme_location' => 'footer',
                     'container'      => false,
@@ -86,7 +95,7 @@
 </footer>
 
 <!-- Back to Top FAB -->
-<button class="back-to-top md-fab md-ripple" aria-label="<?php esc_attr_e('Back to top', 'flavor'); ?>">
+<button class="back-to-top md-fab md-ripple" aria-label="<?php esc_attr_e('回到顶部', 'flavor'); ?>">
     <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
         <path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/>
     </svg>

@@ -43,7 +43,6 @@ html {
 
 body {
   min-height: 100vh;
-  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--md-sys-color-surface);
@@ -51,7 +50,7 @@ body {
   font-family: Roboto, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: var(--md-sys-typescale-body-large-size);
   font-weight: var(--md-sys-typescale-body-large-weight);
-  line-height: var(--md-sys-typescale-body-large-line-height);
+  line-height: 1.75;
   letter-spacing: var(--md-sys-typescale-body-large-tracking);
 }
 
@@ -97,7 +96,7 @@ ol {
 /* === Typography === */
 h1 {
   font-size: var(--md-sys-typescale-display-small-size);
-  font-weight: var(--md-sys-typescale-display-small-weight);
+  font-weight: 700;
   line-height: var(--md-sys-typescale-display-small-line-height);
   letter-spacing: var(--md-sys-typescale-display-small-tracking);
   color: var(--md-sys-color-on-surface);
@@ -106,16 +105,23 @@ h1 {
 
 h2 {
   font-size: var(--md-sys-typescale-headline-large-size);
-  font-weight: var(--md-sys-typescale-headline-large-weight);
+  font-weight: 600;
   line-height: var(--md-sys-typescale-headline-large-line-height);
   letter-spacing: var(--md-sys-typescale-headline-large-tracking);
   color: var(--md-sys-color-on-surface);
   margin-bottom: 0.875rem;
 }
 
+/* Article content heading accent bars */
+.entry-content h2,
+.entry-content h3 {
+  border-left: 4px solid var(--md-sys-color-primary);
+  padding-left: 12px;
+}
+
 h3 {
   font-size: var(--md-sys-typescale-headline-medium-size);
-  font-weight: var(--md-sys-typescale-headline-medium-weight);
+  font-weight: 600;
   line-height: var(--md-sys-typescale-headline-medium-line-height);
   letter-spacing: var(--md-sys-typescale-headline-medium-tracking);
   color: var(--md-sys-color-on-surface);
@@ -206,6 +212,24 @@ pre {
   border-radius: var(--md-sys-shape-corner-medium);
   overflow-x: auto;
   margin-bottom: 1rem;
+  position: relative;
+}
+
+/* Code block language label */
+pre[class*="language-"]::before,
+pre[data-lang]::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2px 10px;
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
+  font-size: var(--md-sys-typescale-label-small-size);
+  font-weight: var(--md-sys-typescale-label-small-weight);
+  letter-spacing: var(--md-sys-typescale-label-small-tracking);
+  border-radius: 0 var(--md-sys-shape-corner-medium) 0 var(--md-sys-shape-corner-small);
+  pointer-events: none;
 }
 
 pre code {
@@ -235,7 +259,13 @@ ol ul {
 /* === Blockquote === */
 blockquote {
   border-left: 4px solid var(--md-sys-color-primary);
-  background-color: var(--md-sys-color-surface-container-low);
+  border-image: linear-gradient(to bottom, var(--md-sys-color-primary), var(--md-sys-color-tertiary)) 1;
+  background:
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--md-sys-color-primary-container) 30%, transparent),
+      var(--md-sys-color-surface-container-low)
+    );
   padding: 1rem 1.5rem;
   margin: 1.5rem 0;
   border-radius: var(--md-sys-shape-corner-medium);
@@ -260,6 +290,12 @@ td {
   padding: 0.75rem 1rem;
   text-align: left;
   border-bottom: 1px solid var(--md-sys-color-outline-variant);
+}
+
+/* Override WordPress block table padding */
+.entry-content th,
+.entry-content td {
+  padding: 0.75rem 1rem;
 }
 
 th {
@@ -569,5 +605,46 @@ figcaption {
 
   @page {
     margin: 2cm;
+  }
+}
+
+/* === View Transitions（渐进增强） === */
+@view-transition {
+  navigation: auto;
+}
+
+/* 关键元素命名 — 浏览器在页面切换时自动创建快照过渡 */
+.site-header {
+  view-transition-name: site-header;
+}
+
+/* 主内容区域整体过渡 */
+.content-area {
+  view-transition-name: main-content;
+}
+
+/* 文章详情页的特色图（单一实例，可安全命名） */
+.single-featured-image {
+  view-transition-name: featured-image;
+}
+
+/* 过渡动画自定义 */
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+  animation-duration: 0.25s;
+}
+
+::view-transition-old(featured-image),
+::view-transition-new(featured-image) {
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* 尊重用户偏好：减少动画 */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.01s !important;
   }
 }

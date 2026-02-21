@@ -7,37 +7,37 @@ function flavor_register_block_styles() {
     // Quote styles
     register_block_style( 'core/quote', [
         'name'  => 'flavor-highlight',
-        'label' => __( 'Highlight Quote', 'flavor' ),
+        'label' => __( '高亮引用', 'flavor' ),
     ] );
 
     // Button styles
     register_block_style( 'core/button', [
         'name'  => 'flavor-filled',
-        'label' => __( 'Filled', 'flavor' ),
+        'label' => __( '填充', 'flavor' ),
     ] );
     register_block_style( 'core/button', [
         'name'  => 'flavor-tonal',
-        'label' => __( 'Tonal', 'flavor' ),
+        'label' => __( '色调', 'flavor' ),
     ] );
     register_block_style( 'core/button', [
         'name'  => 'flavor-outlined',
-        'label' => __( 'Outlined', 'flavor' ),
+        'label' => __( '描边', 'flavor' ),
     ] );
 
     // Group styles
     register_block_style( 'core/group', [
         'name'  => 'flavor-card',
-        'label' => __( 'Card', 'flavor' ),
+        'label' => __( '卡片', 'flavor' ),
     ] );
     register_block_style( 'core/group', [
         'name'  => 'flavor-surface',
-        'label' => __( 'Surface Container', 'flavor' ),
+        'label' => __( '表面容器', 'flavor' ),
     ] );
 
     // Image styles
     register_block_style( 'core/image', [
         'name'  => 'flavor-rounded',
-        'label' => __( 'Rounded', 'flavor' ),
+        'label' => __( '圆角', 'flavor' ),
     ] );
 }
 add_action( 'init', 'flavor_register_block_styles' );

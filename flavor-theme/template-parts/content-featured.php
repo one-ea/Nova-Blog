@@ -6,7 +6,12 @@
 
         <?php if (has_post_thumbnail()) : ?>
         <div class="featured-card__media">
-            <?php the_post_thumbnail('full', ['class' => 'featured-card__image']); ?>
+            <?php the_post_thumbnail('full', [
+                'class'         => 'featured-card__image',
+                'loading'       => 'eager',
+                'fetchpriority' => 'high',
+                'decoding'      => 'async',
+            ]); ?>
         </div>
         <?php endif; ?>
 
@@ -25,8 +30,8 @@
             <div class="flex items-center gap-8 mt-16">
                 <?php echo get_avatar(get_the_author_meta('ID'), 32, '', '', ['class' => 'avatar-circle']); ?>
                 <span class="text-label-large" style="color: #fff;"><?php the_author(); ?></span>
-                <span style="color: rgba(255,255,255,0.6);">·</span>
-                <span class="text-label-medium" style="color: rgba(255,255,255,0.6);"><?php echo get_the_date(); ?></span>
+                <span style="color: rgba(255,255,255,0.7);">·</span>
+                <span class="text-label-medium" style="color: rgba(255,255,255,0.7);"><?php echo get_the_date(); ?></span>
             </div>
         </div>
 
