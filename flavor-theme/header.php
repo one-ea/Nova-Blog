@@ -86,6 +86,13 @@
     </div>
 </header>
 
+<?php if (is_single()) : ?>
+<!-- Reading Progress Bar -->
+<div class="reading-progress" aria-hidden="true">
+    <div class="reading-progress__bar"></div>
+</div>
+<?php endif; ?>
+
 <!-- Search Overlay -->
 <div class="search-overlay" role="search" aria-hidden="true">
     <div class="search-overlay__bar">

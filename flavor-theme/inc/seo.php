@@ -17,12 +17,18 @@ function flavor_has_seo_plugin() {
 
 /**
  * 获取当前页面的 SEO 描述文本
- * 统一提取逻辑，消除各模块间的重复代码
+ * 优先使用 Meta Box 自定义值，否则自动生成
  *
  * @param int $word_count 截取词数（默认 50）
  * @return string
  */
 function flavor_get_seo_description($word_count = 50) {
+    // 优先使用 Meta Box 自定义描述
+    if (is_singular()) {
+        $custom = get_post_meta(get_the_ID(), '_flavor_seo_desc', true);
+        if ($custom) return wp_strip_all_tags(trim($custom));
+    }
+
     $desc = '';
     if (is_singular()) {
         $desc = has_excerpt() ? get_the_excerpt() : wp_trim_words(get_the_content(), $word_count, '...');
@@ -43,14 +49,40 @@ function flavor_get_seo_description($word_count = 50) {
  * @return array|null ['url' => string, 'width' => int, 'height' => int]
  */
 function flavor_get_seo_image($size = 'large') {
-    // 文章特色图
+    // 1. Meta Box 自定义 OG 图片
+    if (is_singular()) {
+        $custom_url = get_post_meta(get_the_ID(), '_flavor_seo_image', true);
+        if ($custom_url) {
+            $id = attachment_url_to_postid($custom_url);
+            if ($id) {
+                $img = wp_get_attachment_image_src($id, $size);
+                if ($img) {
+                    return ['url' => $img[0], 'width' => $img[1], 'height' => $img[2]];
+                }
+            }
+            // URL 存在但无法解析为附件，直接返回 URL
+            return ['url' => $custom_url, 'width' => 1200, 'height' => 630];
+        }
+    }
+
+    // 2. 文章特色图
     if (is_singular() && has_post_thumbnail()) {
         $img = wp_get_attachment_image_src(get_post_thumbnail_id(), $size);
         if ($img) {
             return ['url' => $img[0], 'width' => $img[1], 'height' => $img[2]];
         }
     }
-    // Fallback: 自定义 logo
+
+    // 3. Customizer 默认 OG 图片
+    $default_og_id = get_theme_mod('flavor_default_og_image');
+    if ($default_og_id) {
+        $img = wp_get_attachment_image_src($default_og_id, $size);
+        if ($img) {
+            return ['url' => $img[0], 'width' => $img[1], 'height' => $img[2]];
+        }
+    }
+
+    // 4. Fallback: 自定义 logo
     $logo_id = get_theme_mod('custom_logo');
     if ($logo_id) {
         $img = wp_get_attachment_image_src($logo_id, 'full');
@@ -146,8 +178,9 @@ function flavor_seo_open_graph() {
     echo '<meta property="og:locale" content="' . esc_attr(get_locale()) . '">' . "\n";
 
     if (is_singular()) {
+        $og_title = get_post_meta(get_the_ID(), '_flavor_seo_title', true) ?: get_the_title();
         echo '<meta property="og:type" content="article">' . "\n";
-        echo '<meta property="og:title" content="' . esc_attr(get_the_title()) . '">' . "\n";
+        echo '<meta property="og:title" content="' . esc_attr($og_title) . '">' . "\n";
         echo '<meta property="og:url" content="' . esc_url(get_permalink()) . '">' . "\n";
         echo '<meta property="og:description" content="' . esc_attr(flavor_get_seo_description()) . '">' . "\n";
         echo '<meta property="article:published_time" content="' . esc_attr(get_the_date('c')) . '">' . "\n";
@@ -185,7 +218,14 @@ function flavor_seo_open_graph() {
 function flavor_seo_twitter_card() {
     $img = flavor_get_seo_image();
     echo '<meta name="twitter:card" content="' . ($img ? 'summary_large_image' : 'summary') . '">' . "\n";
-    echo '<meta name="twitter:title" content="' . esc_attr(is_singular() ? get_the_title() : wp_get_document_title()) . '">' . "\n";
+
+    // 优先使用 Meta Box 自定义标题
+    if (is_singular()) {
+        $title = get_post_meta(get_the_ID(), '_flavor_seo_title', true) ?: get_the_title();
+    } else {
+        $title = wp_get_document_title();
+    }
+    echo '<meta name="twitter:title" content="' . esc_attr($title) . '">' . "\n";
 
     $desc = flavor_get_seo_description();
     if ($desc) {

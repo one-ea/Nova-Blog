@@ -1,6 +1,6 @@
 <?php
 // 主题常量
-define('FLAVOR_VERSION', '2.6.5');
+define('FLAVOR_VERSION', '2.14.1');
 define('FLAVOR_DIR', get_template_directory());
 define('FLAVOR_URI', get_template_directory_uri());
 
@@ -10,6 +10,7 @@ require_once FLAVOR_DIR . '/inc/enqueue.php';
 require_once FLAVOR_DIR . '/inc/customizer.php';
 require_once FLAVOR_DIR . '/inc/widgets.php';
 require_once FLAVOR_DIR . '/inc/seo.php';
+require_once FLAVOR_DIR . '/inc/seo-metabox.php';
 require_once FLAVOR_DIR . '/inc/block-patterns.php';
 require_once FLAVOR_DIR . '/inc/block-styles.php';
 require_once FLAVOR_DIR . '/inc/walker-comment.php';
@@ -174,6 +175,68 @@ add_action('delete_post', 'flavor_clear_footer_cache');
 add_action('created_category', 'flavor_clear_footer_cache');
 add_action('edited_category', 'flavor_clear_footer_cache');
 add_action('delete_category', 'flavor_clear_footer_cache');
+
+// 首页排除置顶文章（已在 featured 区单独展示）
+function flavor_exclude_sticky_from_main($query) {
+    if ($query->is_home() && $query->is_main_query() && !$query->is_paged()) {
+        $sticky = get_option('sticky_posts');
+        if (!empty($sticky)) {
+            $query->set('ignore_sticky_posts', 1);
+            $existing = $query->get('post__not_in') ?: [];
+            $query->set('post__not_in', array_merge($existing, $sticky));
+        }
+    }
+}
+add_action('pre_get_posts', 'flavor_exclude_sticky_from_main');
+
+// ─── AJAX 点赞 ─────────────────────────────────────────
+
+function flavor_like_post() {
+    check_ajax_referer('flavor_post_actions', 'nonce');
+
+    $post_id = absint($_POST['post_id'] ?? 0);
+    if (!$post_id || !get_post($post_id)) {
+        wp_send_json_error('Invalid post', 400);
+    }
+
+    $count = (int) get_post_meta($post_id, 'flavor_post_likes', true);
+    $count++;
+    update_post_meta($post_id, 'flavor_post_likes', $count);
+
+    wp_send_json_success(['count' => $count]);
+}
+add_action('wp_ajax_flavor_like_post', 'flavor_like_post');
+add_action('wp_ajax_nopriv_flavor_like_post', 'flavor_like_post');
+
+function flavor_get_post_likes($post_id = null) {
+    $post_id = $post_id ?: get_the_ID();
+    $count = get_post_meta($post_id, 'flavor_post_likes', true);
+    return $count ? intval($count) : 0;
+}
+
+// ─── AJAX 评论点赞 ───────────────────────────────────────
+
+function flavor_like_comment() {
+    check_ajax_referer('flavor_post_actions', 'nonce');
+
+    $comment_id = absint($_POST['comment_id'] ?? 0);
+    if (!$comment_id || !get_comment($comment_id)) {
+        wp_send_json_error('Invalid comment', 400);
+    }
+
+    $count = (int) get_comment_meta($comment_id, 'flavor_comment_likes', true);
+    $count++;
+    update_comment_meta($comment_id, 'flavor_comment_likes', $count);
+
+    wp_send_json_success(['count' => $count]);
+}
+add_action('wp_ajax_flavor_like_comment', 'flavor_like_comment');
+add_action('wp_ajax_nopriv_flavor_like_comment', 'flavor_like_comment');
+
+function flavor_get_comment_likes($comment_id) {
+    $count = get_comment_meta($comment_id, 'flavor_comment_likes', true);
+    return $count ? intval($count) : 0;
+}
 
 // ─── PWA 支持 ──────────────────────────────────────────
 

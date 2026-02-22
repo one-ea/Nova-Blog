@@ -30,9 +30,15 @@ function flavor_enqueue_scripts() {
         'seedColor' => get_theme_mod('flavor_seed_color', '#6750A4'),
     ]);
 
-    // 文章页加载 TOC
+    // 文章页加载 TOC + 代码复制 + 交互按钮
     if (is_single()) {
         wp_enqueue_script('flavor-toc', flavor_asset_uri('js/toc.js'), [], FLAVOR_VERSION, ['strategy' => 'defer', 'in_footer' => true]);
+        wp_enqueue_script('flavor-copy-code', flavor_asset_uri('js/copy-code.js'), [], FLAVOR_VERSION, ['strategy' => 'defer', 'in_footer' => true]);
+        wp_enqueue_script('flavor-post-actions', flavor_asset_uri('js/post-actions.js'), [], FLAVOR_VERSION, ['strategy' => 'defer', 'in_footer' => true]);
+        wp_localize_script('flavor-post-actions', 'flavorPostActions', [
+            'ajaxUrl' => admin_url('admin-ajax.php'),
+            'nonce'   => wp_create_nonce('flavor_post_actions'),
+        ]);
     }
 
     // 搜索数据
@@ -46,6 +52,11 @@ function flavor_enqueue_scripts() {
     if (is_singular() && comments_open() && get_option('thread_comments')) {
         wp_enqueue_script('comment-reply');
     }
+
+    // AJAX 评论（文章/页面且评论开放）
+    if (is_singular() && comments_open()) {
+        wp_enqueue_script('flavor-ajax-comments', flavor_asset_uri('js/ajax-comments.js'), [], FLAVOR_VERSION, ['strategy' => 'defer', 'in_footer' => true]);
+    }
 }
 add_action('wp_enqueue_scripts', 'flavor_enqueue_scripts');
 
@@ -56,11 +67,11 @@ function flavor_preload_assets() {
     echo '<link rel="dns-prefetch" href="//fonts.gstatic.com">' . "\n";
     // 预加载 Roboto（自托管）
     echo '<link rel="preload" href="' . FLAVOR_URI . '/assets/fonts/roboto-latin.woff2" as="font" type="font/woff2" crossorigin>' . "\n";
-    // 异步加载 Noto Sans SC（中文字体太大，不自托管）
+    // 异步加载 Noto Sans SC + Playfair Display（品牌展示字体）
     echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
     echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
-    echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" media="print" onload="this.media=\'all\'">' . "\n";
-    echo '<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap"></noscript>' . "\n";
+    echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap" media="print" onload="this.media=\'all\'">' . "\n";
+    echo '<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap"></noscript>' . "\n";
 }
 add_action('wp_head', 'flavor_preload_assets', 1);
 

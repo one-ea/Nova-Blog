@@ -134,6 +134,68 @@ function flavor_customize_register($wp_customize) {
         'section' => 'flavor_footer',
         'type' => 'textarea',
     ]);
+
+    // === SEO ===
+    $wp_customize->add_section('flavor_seo', [
+        'title' => __('SEO 设置', 'flavor'),
+        'priority' => 42,
+    ]);
+
+    // 默认 OG 图片
+    $wp_customize->add_setting('flavor_default_og_image', [
+        'default' => '',
+        'sanitize_callback' => 'absint',
+    ]);
+    $wp_customize->add_control(new WP_Customize_Media_Control($wp_customize, 'flavor_default_og_image', [
+        'label' => __('默认社交分享图片', 'flavor'),
+        'description' => __('当文章没有特色图片和自定义 OG 图时使用，推荐 1200×630', 'flavor'),
+        'section' => 'flavor_seo',
+        'mime_type' => 'image',
+    ]));
+
+    // === 社交链接 ===
+    $wp_customize->add_section('flavor_social', [
+        'title' => __('社交链接', 'flavor'),
+        'priority' => 45,
+    ]);
+
+    $social_links = [
+        'github'  => ['label' => 'GitHub', 'default' => ''],
+        'twitter' => ['label' => 'Twitter / X', 'default' => ''],
+        'email'   => ['label' => __('邮箱地址', 'flavor'), 'default' => ''],
+        'rss'     => ['label' => 'RSS', 'default' => ''],
+    ];
+
+    foreach ($social_links as $key => $opts) {
+        $setting_id = 'flavor_social_' . $key;
+        $wp_customize->add_setting($setting_id, [
+            'default' => $opts['default'],
+            'sanitize_callback' => $key === 'email' ? 'sanitize_email' : 'esc_url_raw',
+        ]);
+        $wp_customize->add_control($setting_id, [
+            'label' => $opts['label'],
+            'section' => 'flavor_social',
+            'type' => $key === 'email' ? 'email' : 'url',
+        ]);
+    }
+
+    // === 关于页 ===
+    $wp_customize->add_section('flavor_about', [
+        'title' => __('关于页', 'flavor'),
+        'priority' => 48,
+    ]);
+
+    // 兴趣标签（逗号分隔）
+    $wp_customize->add_setting('flavor_about_interests', [
+        'default' => '',
+        'sanitize_callback' => 'sanitize_text_field',
+    ]);
+    $wp_customize->add_control('flavor_about_interests', [
+        'label' => __('兴趣与技能标签', 'flavor'),
+        'description' => __('用逗号分隔，如：摄影, 编程, 烘焙, 旅行', 'flavor'),
+        'section' => 'flavor_about',
+        'type' => 'textarea',
+    ]);
 }
 add_action('customize_register', 'flavor_customize_register');
 

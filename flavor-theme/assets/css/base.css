@@ -1,3 +1,45 @@
+/* === View Transitions (cross-document MPA) === */
+@view-transition {
+  navigation: auto;
+}
+
+::view-transition-old(root) {
+  animation: fade-out 0.15s ease-in;
+}
+
+::view-transition-new(root) {
+  animation: fade-in 0.2s ease-out;
+}
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Named transition for page content area */
+::view-transition-old(main-content) {
+  animation: slide-out 0.2s ease-in;
+}
+
+::view-transition-new(main-content) {
+  animation: slide-in 0.25s ease-out;
+}
+
+@keyframes slide-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+@keyframes slide-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 /* === Self-hosted Fonts === */
 @font-face {
   font-family: 'Roboto';
@@ -235,6 +277,42 @@ pre[data-lang]::before {
 pre code {
   background: none;
   padding: 0;
+}
+
+/* Copy code button */
+.copy-code-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: var(--md-sys-shape-corner-small);
+  background: var(--md-sys-color-surface-container);
+  color: var(--md-sys-color-on-surface-variant);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s, background-color 0.2s, color 0.2s;
+  z-index: 1;
+}
+
+pre:hover .copy-code-btn,
+.copy-code-btn:focus-visible {
+  opacity: 1;
+}
+
+.copy-code-btn:hover {
+  background: var(--md-sys-color-surface-container-high);
+  color: var(--md-sys-color-on-surface);
+}
+
+.copy-code-btn.copied {
+  opacity: 1;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-on-primary-container);
 }
 
 /* === Lists === */
@@ -619,7 +697,7 @@ figcaption {
 }
 
 /* 主内容区域整体过渡 */
-.content-area {
+.site-main {
   view-transition-name: main-content;
 }
 
