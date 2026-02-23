@@ -92,7 +92,7 @@ body {
   font-family: Roboto, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: var(--md-sys-typescale-body-large-size);
   font-weight: var(--md-sys-typescale-body-large-weight);
-  line-height: 1.75;
+  line-height: 1.65;
   letter-spacing: var(--md-sys-typescale-body-large-tracking);
 }
 
@@ -154,11 +154,39 @@ h2 {
   margin-bottom: 0.875rem;
 }
 
-/* Article content heading accent bars */
+/* Article content heading accent bars — TOP5: Enhanced visual rhythm */
 .entry-content h2,
 .entry-content h3 {
-  border-left: 4px solid var(--md-sys-color-primary);
-  padding-left: 12px;
+  border-left: 3px solid var(--md-sys-color-primary);
+  padding-left: 16px;
+}
+
+.entry-content h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-top: 1.5rem;
+  position: relative;
+}
+
+/* Subtle section separator line above h2 */
+.entry-content h2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--md-sys-color-outline-variant);
+}
+
+.entry-content h3 {
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+/* Long-form reading: slightly more generous line-height */
+.entry-content {
+  line-height: 1.8;
 }
 
 h3 {
@@ -378,7 +406,7 @@ td {
 
 th {
   background-color: var(--md-sys-color-surface-container);
-  font-weight: 700;
+  font-weight: 600;
   font-size: var(--md-sys-typescale-title-small-size);
 }
 

@@ -1,1 +1,203 @@
-{const v=".entry-content h2, .entry-content h3, .entry-content h4",b=".toc-container",C="-80px 0px -60% 0px";let i=[],p=[],u=null,r=null,c=null,l=null,d=!1;const E=()=>{if(r=document.querySelector(b),!r)return!1;const a=document.querySelectorAll(v);if(a.length===0)return r.style.display="none",!1;a.forEach((n,m)=>{n.id||(n.id=`toc-heading-${m}`),i.push({el:n,id:n.id,text:n.textContent.trim(),level:parseInt(n.tagName.charAt(1),10)})});const o=document.createElement("div");o.className="toc-header";const e=document.createElement("span");e.className="toc-title",e.textContent="\u76EE\u5F55",o.appendChild(e),l=document.createElement("button"),l.className="toc-toggle",l.setAttribute("aria-label","\u5C55\u5F00/\u6536\u8D77\u76EE\u5F55"),l.setAttribute("aria-expanded","true"),l.textContent="\u25BE",l.addEventListener("click",k),o.appendChild(l),r.appendChild(o),c=document.createElement("nav"),c.className="toc-nav",c.setAttribute("aria-label","\u6587\u7AE0\u76EE\u5F55");const t=document.createElement("ul");t.className="toc-list";const L=Math.min(...i.map(n=>n.level));for(const n of i){const m=n.level-L,g=document.createElement("li");g.className=`toc-item toc-item--level-${m}`,g.style.paddingLeft=`${m*16}px`;const s=document.createElement("a");s.className="toc-link",s.href=`#${n.id}`,s.textContent=n.text,s.setAttribute("data-heading-id",n.id),s.addEventListener("click",N=>{N.preventDefault();const h=document.getElementById(n.id);h&&(h.scrollIntoView({behavior:"smooth",block:"start"}),history.pushState(null,"",`#${n.id}`))}),g.appendChild(s),t.appendChild(g),p.push(s)}return c.appendChild(t),r.appendChild(c),!0},k=()=>{d=!d,c?.classList.toggle("toc-nav--collapsed",d),l&&(l.textContent=d?"\u25B8":"\u25BE",l.setAttribute("aria-expanded",String(!d)))},y=a=>{for(const e of p){const t=e.getAttribute("data-heading-id")===a;e.classList.toggle("toc-link--active",t),e.setAttribute("aria-current",t?"true":"false")}const o=r?.querySelector(".toc-link--active");if(o&&c){const e=o.getBoundingClientRect(),t=c.getBoundingClientRect();(e.top<t.top||e.bottom>t.bottom)&&o.scrollIntoView({block:"nearest",behavior:"smooth"})}},x=()=>{if(i.length===0)return;const a=new Map;u=new IntersectionObserver(o=>{for(const t of o)a.set(t.target.id,t.isIntersecting);let e=null;for(const t of i)if(a.get(t.id)){e=t.id;break}if(!e){for(let t=i.length-1;t>=0;t--)if(i[t].el.getBoundingClientRect().top<window.innerHeight*.4){e=i[t].id;break}}e&&y(e)},{rootMargin:C,threshold:[0,1]});for(const o of i)u.observe(o.el)},A=()=>{u?.disconnect(),u=null,i=[],p=[]},f=()=>{E()&&x()};document.readyState==="loading"?document.addEventListener("DOMContentLoaded",f):f(),window.flavorToc={destroy:A}}
+/**
+ * Flavor Theme - 文章目录导航 (Table of Contents)
+ * 自动扫描文章标题生成目录树，滚动高亮当前章节
+ */
+{
+  'use strict';
+
+  /** 配置 */
+  const HEADING_SELECTOR = '.entry-content h2, .entry-content h3, .entry-content h4';
+  const TOC_CONTAINER_SELECTOR = '.toc-container';
+  const OBSERVER_ROOT_MARGIN = '-80px 0px -60% 0px';
+
+  /** 状态 */
+  let headings = [];
+  let tocLinks = [];
+  let observer = null;
+  let tocContainer = null;
+  let tocList = null;
+  let tocToggle = null;
+  let isCollapsed = false;
+
+  // ─── 生成目录树 ───────────────────────────────────
+
+  const buildToc = () => {
+    tocContainer = document.querySelector(TOC_CONTAINER_SELECTOR);
+    if (!tocContainer) return false;
+
+    const rawHeadings = document.querySelectorAll(HEADING_SELECTOR);
+    if (rawHeadings.length === 0) {
+      tocContainer.style.display = 'none';
+      return false;
+    }
+
+    // 确保每个标题有 id
+    rawHeadings.forEach((heading, index) => {
+      if (!heading.id) {
+        heading.id = `toc-heading-${index}`;
+      }
+      headings.push({
+        el: heading,
+        id: heading.id,
+        text: heading.textContent.trim(),
+        level: parseInt(heading.tagName.charAt(1), 10),
+      });
+    });
+
+    // 创建目录标题栏
+    const tocHeader = document.createElement('div');
+    tocHeader.className = 'toc-header';
+
+    const tocTitle = document.createElement('span');
+    tocTitle.className = 'toc-title';
+    tocTitle.textContent = '目录';
+    tocHeader.appendChild(tocTitle);
+
+    // 移动端折叠按钮
+    tocToggle = document.createElement('button');
+    tocToggle.className = 'toc-toggle';
+    tocToggle.setAttribute('aria-label', '展开/收起目录');
+    tocToggle.setAttribute('aria-expanded', 'true');
+    tocToggle.textContent = '▾';
+    tocToggle.addEventListener('click', toggleCollapse);
+    tocHeader.appendChild(tocToggle);
+
+    tocContainer.appendChild(tocHeader);
+
+    // 创建列表
+    tocList = document.createElement('nav');
+    tocList.className = 'toc-nav';
+    tocList.setAttribute('aria-label', '文章目录');
+
+    const ol = document.createElement('ul');
+    ol.className = 'toc-list';
+
+    const minLevel = Math.min(...headings.map((h) => h.level));
+
+    for (const heading of headings) {
+      const indent = heading.level - minLevel;
+      const li = document.createElement('li');
+      li.className = `toc-item toc-item--level-${indent}`;
+
+      const link = document.createElement('a');
+      link.className = 'toc-link';
+      link.href = `#${heading.id}`;
+      link.textContent = heading.text;
+      link.setAttribute('data-heading-id', heading.id);
+
+      // 平滑滚动
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.getElementById(heading.id);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.pushState(null, '', `#${heading.id}`);
+        }
+      });
+
+      li.appendChild(link);
+      ol.appendChild(li);
+      tocLinks.push(link);
+    }
+
+    tocList.appendChild(ol);
+    tocContainer.appendChild(tocList);
+
+    return true;
+  };
+
+  // ─── 折叠 / 展开（移动端） ────────────────────────
+
+  const toggleCollapse = () => {
+    isCollapsed = !isCollapsed;
+    tocList?.classList.toggle('toc-nav--collapsed', isCollapsed);
+    if (tocToggle) {
+      tocToggle.textContent = isCollapsed ? '▸' : '▾';
+      tocToggle.setAttribute('aria-expanded', String(!isCollapsed));
+    }
+  };
+
+  // ─── Intersection Observer 滚动高亮 ──────────────
+
+  const highlightTocItem = (activeId) => {
+    for (const link of tocLinks) {
+      const isActive = link.getAttribute('data-heading-id') === activeId;
+      link.classList.toggle('toc-link--active', isActive);
+      link.setAttribute('aria-current', isActive ? 'true' : 'false');
+    }
+
+    // 确保活跃项在目录容器中可见
+    const activeLink = tocContainer?.querySelector('.toc-link--active');
+    if (activeLink && tocList) {
+      const linkRect = activeLink.getBoundingClientRect();
+      const navRect = tocList.getBoundingClientRect();
+      if (linkRect.top < navRect.top || linkRect.bottom > navRect.bottom) {
+        activeLink.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      }
+    }
+  };
+
+  const initObserver = () => {
+    if (headings.length === 0) return;
+
+    const visibleHeadings = new Map();
+
+    observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        visibleHeadings.set(entry.target.id, entry.isIntersecting);
+      }
+
+      // 找到第一个可见的标题
+      let activeId = null;
+      for (const heading of headings) {
+        if (visibleHeadings.get(heading.id)) {
+          activeId = heading.id;
+          break;
+        }
+      }
+
+      // 如果没有可见标题，找最后一个已经滚过的
+      if (!activeId) {
+        for (let j = headings.length - 1; j >= 0; j--) {
+          if (headings[j].el.getBoundingClientRect().top < window.innerHeight * 0.4) {
+            activeId = headings[j].id;
+            break;
+          }
+        }
+      }
+
+      if (activeId) highlightTocItem(activeId);
+    }, {
+      rootMargin: OBSERVER_ROOT_MARGIN,
+      threshold: [0, 1],
+    });
+
+    for (const heading of headings) {
+      observer.observe(heading.el);
+    }
+  };
+
+  // ─── 清理 ─────────────────────────────────────────
+
+  const destroy = () => {
+    observer?.disconnect();
+    observer = null;
+    headings = [];
+    tocLinks = [];
+  };
+
+  // ─── 初始化 ───────────────────────────────────────
+
+  const init = () => {
+    if (buildToc()) initObserver();
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // 暴露 destroy 方法供 SPA 场景使用
+  window.flavorToc = { destroy };
+}

@@ -1,10 +1,34 @@
 <?php
+// ─── 一次性迁移：从旧主题 slug 复制 Customizer 设置 ──────
+// 原因：部署时 WordPress 将主题装入 flavor-theme（新目录），
+// 而旧设置在 theme_mods_flavor-theme-1 中，需要迁移过来。
+add_action('after_setup_theme', function () {
+    if (get_option('flavor_mods_migrated_v1')) return;
+
+    $old_mods = get_option('theme_mods_flavor-theme-1');
+    if (!$old_mods || !is_array($old_mods)) {
+        // 没有旧数据，标记已完成
+        update_option('flavor_mods_migrated_v1', true);
+        return;
+    }
+
+    // 将旧设置合并到当前主题（不覆盖已有的新设置）
+    foreach ($old_mods as $key => $value) {
+        if (false === get_theme_mod($key)) {
+            set_theme_mod($key, $value);
+        }
+    }
+
+    update_option('flavor_mods_migrated_v1', true);
+}, 1);
+
 // 主题常量
-define('FLAVOR_VERSION', '2.14.1');
+define('FLAVOR_VERSION', '2.18.0');
 define('FLAVOR_DIR', get_template_directory());
 define('FLAVOR_URI', get_template_directory_uri());
 
 // 加载功能模块
+require_once FLAVOR_DIR . '/inc/color-engine.php';
 require_once FLAVOR_DIR . '/inc/theme-support.php';
 require_once FLAVOR_DIR . '/inc/enqueue.php';
 require_once FLAVOR_DIR . '/inc/customizer.php';
@@ -176,9 +200,78 @@ add_action('created_category', 'flavor_clear_footer_cache');
 add_action('edited_category', 'flavor_clear_footer_cache');
 add_action('delete_category', 'flavor_clear_footer_cache');
 
+// ─── 个性化：body_class 过滤器 ─────────────────────────
+function flavor_personalization_body_class($classes) {
+    $map = [
+        'flavor_font_family'     => ['system'      => '', 'serif' => 'font-serif', 'rounded' => 'font-rounded'],
+        'flavor_font_scale'      => ['standard'    => '', 'compact' => 'scale-compact', 'large' => 'scale-large'],
+        'flavor_corner_style'    => ['rounded'     => '', 'sharp' => 'corners-sharp', 'pill' => 'corners-pill'],
+        'flavor_card_style'      => ['elevated'    => '', 'outlined' => 'cards-outlined', 'filled' => 'cards-filled'],
+        'flavor_content_density' => ['comfortable' => '', 'compact' => 'density-compact', 'spacious' => 'density-spacious'],
+    ];
+    foreach ($map as $mod => $values) {
+        $defaults = ['flavor_font_family' => 'system', 'flavor_font_scale' => 'standard', 'flavor_corner_style' => 'rounded', 'flavor_card_style' => 'elevated', 'flavor_content_density' => 'comfortable'];
+        $val = get_theme_mod($mod, $defaults[$mod]);
+        if (!empty($values[$val])) {
+            $classes[] = $values[$val];
+        }
+    }
+    if (!get_theme_mod('flavor_enable_animations', true)) {
+        $classes[] = 'no-animations';
+    }
+    return $classes;
+}
+add_filter('body_class', 'flavor_personalization_body_class');
+
+// ─── 个性化：内联 CSS 自定义属性覆盖 ────────────────────
+function flavor_personalization_css() {
+    $rules = [];
+
+    // 字体系列
+    $font = get_theme_mod('flavor_font_family', 'system');
+    if ($font === 'serif') {
+        $rules[] = ':root{--md-sys-typescale-display-font:"Noto Serif SC",Georgia,serif;--md-sys-typescale-text-font:"Noto Serif SC",Georgia,serif}';
+    } elseif ($font === 'rounded') {
+        $rules[] = ':root{--md-sys-typescale-display-font:"Nunito","Noto Sans SC",system-ui,sans-serif;--md-sys-typescale-text-font:"Nunito","Noto Sans SC",system-ui,sans-serif}';
+    }
+
+    // 字体缩放
+    $scale = get_theme_mod('flavor_font_scale', 'standard');
+    if ($scale === 'compact') {
+        $rules[] = ':root{--md-sys-typescale-display-large-size:50px;--md-sys-typescale-display-large-line-height:56px;--md-sys-typescale-headline-large-size:28px;--md-sys-typescale-headline-large-line-height:34px;--md-sys-typescale-body-large-size:14px;--md-sys-typescale-body-large-line-height:20px}';
+    } elseif ($scale === 'large') {
+        $rules[] = ':root{--md-sys-typescale-display-large-size:64px;--md-sys-typescale-display-large-line-height:72px;--md-sys-typescale-headline-large-size:36px;--md-sys-typescale-headline-large-line-height:44px;--md-sys-typescale-body-large-size:18px;--md-sys-typescale-body-large-line-height:26px}';
+    }
+
+    // 圆角风格
+    $corners = get_theme_mod('flavor_corner_style', 'rounded');
+    if ($corners === 'sharp') {
+        $rules[] = ':root{--md-sys-shape-corner-extra-small:0px;--md-sys-shape-corner-small:0px;--md-sys-shape-corner-medium:0px;--md-sys-shape-corner-large:0px;--md-sys-shape-corner-extra-large:0px}';
+    } elseif ($corners === 'pill') {
+        $rules[] = ':root{--md-sys-shape-corner-extra-small:8px;--md-sys-shape-corner-small:16px;--md-sys-shape-corner-medium:24px;--md-sys-shape-corner-large:28px;--md-sys-shape-corner-extra-large:9999px}';
+    }
+
+    if (empty($rules)) return;
+    echo '<style id="flavor-personalization">' . implode('', $rules) . '</style>' . "\n";
+}
+add_action('wp_head', 'flavor_personalization_css', 3);
+
+// ─── 个性化：卡片类名辅助函数 ──────────────────────────
+function flavor_card_class() {
+    $style = get_theme_mod('flavor_card_style', 'elevated');
+    $map = [
+        'elevated' => 'md-card-elevated',
+        'outlined' => 'md-card-outlined',
+        'filled'   => 'md-card-filled',
+    ];
+    return $map[$style] ?? 'md-card-elevated';
+}
+
 // 首页排除置顶文章（已在 featured 区单独展示）
 function flavor_exclude_sticky_from_main($query) {
     if ($query->is_home() && $query->is_main_query() && !$query->is_paged()) {
+        // 当 featured 区关闭时，不排除置顶文章
+        if (!get_theme_mod('flavor_show_featured', true)) return;
         $sticky = get_option('sticky_posts');
         if (!empty($sticky)) {
             $query->set('ignore_sticky_posts', 1);

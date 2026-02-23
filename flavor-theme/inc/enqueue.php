@@ -30,6 +30,12 @@ function flavor_enqueue_scripts() {
         'seedColor' => get_theme_mod('flavor_seed_color', '#6750A4'),
     ]);
 
+    // 动画配置
+    wp_localize_script('flavor-scroll-enhance', 'flavorConfig', [
+        'enableAnimations'       => (bool) get_theme_mod('flavor_enable_animations', true),
+        'enableScrollAnimations' => (bool) get_theme_mod('flavor_enable_scroll_animations', true),
+    ]);
+
     // 文章页加载 TOC + 代码复制 + 交互按钮
     if (is_single()) {
         wp_enqueue_script('flavor-toc', flavor_asset_uri('js/toc.js'), [], FLAVOR_VERSION, ['strategy' => 'defer', 'in_footer' => true]);
@@ -67,11 +73,21 @@ function flavor_preload_assets() {
     echo '<link rel="dns-prefetch" href="//fonts.gstatic.com">' . "\n";
     // 预加载 Roboto（自托管）
     echo '<link rel="preload" href="' . FLAVOR_URI . '/assets/fonts/roboto-latin.woff2" as="font" type="font/woff2" crossorigin>' . "\n";
-    // 异步加载 Noto Sans SC + Playfair Display（品牌展示字体）
+    // 异步加载 Noto Sans SC + Playfair Display（品牌展示字体）+ 个性化字体
     echo '<link rel="preconnect" href="https://fonts.googleapis.com">' . "\n";
     echo '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' . "\n";
-    echo '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap" media="print" onload="this.media=\'all\'">' . "\n";
-    echo '<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Playfair+Display:wght@400;700&display=swap"></noscript>' . "\n";
+
+    $families = 'family=Noto+Sans+SC:wght@400;500;700&family=Playfair+Display:wght@400;700';
+    $font = get_theme_mod('flavor_font_family', 'system');
+    if ($font === 'serif') {
+        $families .= '&family=Noto+Serif+SC:wght@400;700';
+    } elseif ($font === 'rounded') {
+        $families .= '&family=Nunito:wght@400;500;700';
+    }
+
+    $url = 'https://fonts.googleapis.com/css2?' . $families . '&display=swap';
+    echo '<link rel="stylesheet" href="' . esc_url($url) . '" media="print" onload="this.media=\'all\'">' . "\n";
+    echo '<noscript><link rel="stylesheet" href="' . esc_url($url) . '"></noscript>' . "\n";
 }
 add_action('wp_head', 'flavor_preload_assets', 1);
 
@@ -86,6 +102,16 @@ function flavor_inline_critical() {
         echo file_get_contents($tokens_file);
         echo '</style>' . "\n";
     }
+
+    // 动态颜色覆盖：基于种子色在服务端生成正确的颜色 tokens，消除紫色闪烁
+    $seed_color = get_theme_mod('flavor_seed_color', '#6750A4');
+    $color_override = flavor_generate_color_override_css($seed_color);
+    if ($color_override) {
+        echo '<style id="flavor-color-override">' . "\n";
+        echo $color_override;
+        echo '</style>' . "\n";
+    }
+
     echo '<script>
     {
         const t = localStorage.getItem("flavor-theme") || "auto";

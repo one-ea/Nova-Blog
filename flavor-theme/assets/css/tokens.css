@@ -66,8 +66,8 @@
      3. Typography Tokens
      ======================================================================== */
 
-  /* Font Stacks */
-  --md-sys-typescale-display-font: "Google Sans", "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
+  /* Font Stacks — TOP9: Remove unavailable Google Sans */
+  --md-sys-typescale-display-font: "Playfair Display", Georgia, "Noto Sans SC", "PingFang SC", system-ui, sans-serif;
   --md-sys-typescale-text-font: "Roboto", "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
 
   /* Display — Large */
@@ -230,112 +230,119 @@
   --md-sys-state-focus-state-layer-opacity: 0.12;
   --md-sys-state-pressed-state-layer-opacity: 0.12;
   --md-sys-state-dragged-state-layer-opacity: 0.16;
+
+  /* ========================================================================
+     8. Spacing Tokens (TOP3: Unified spacing scale, 4px grid)
+     ======================================================================== */
+
+  --md-sys-spacing-xs: 4px;
+  --md-sys-spacing-sm: 8px;
+  --md-sys-spacing-md: 16px;
+  --md-sys-spacing-lg: 24px;
+  --md-sys-spacing-xl: 32px;
+  --md-sys-spacing-2xl: 48px;
+  --md-sys-spacing-3xl: 64px;
+
+  /* Semantic spacing aliases */
+  --md-sys-spacing-section: var(--md-sys-spacing-xl);
+  --md-sys-spacing-card-padding: var(--md-sys-spacing-md);
+  --md-sys-spacing-card-gap: var(--md-sys-spacing-lg);
+  --md-sys-spacing-content-gap: var(--md-sys-spacing-xl);
+
+  /* ========================================================================
+     9. Fluid Typography Tokens (TOP4: clamp() for smooth scaling)
+     ======================================================================== */
+
+  /* Fluid overrides — these replace the fixed px values above for key sizes */
+  --md-sys-typescale-display-large-size: clamp(2.5rem, 2rem + 2.5vw, 3.5625rem);
+  --md-sys-typescale-display-medium-size: clamp(2rem, 1.6rem + 2vw, 2.8125rem);
+  --md-sys-typescale-display-small-size: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
+  --md-sys-typescale-headline-large-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+  --md-sys-typescale-headline-medium-size: clamp(1.25rem, 1.1rem + 0.75vw, 1.75rem);
+  --md-sys-typescale-headline-small-size: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  --md-sys-typescale-title-large-size: clamp(1.125rem, 1.05rem + 0.375vw, 1.375rem);
+  --md-sys-typescale-body-large-size: clamp(0.9375rem, 0.9rem + 0.2vw, 1rem);
+
+  /* Fluid line-heights to match */
+  --md-sys-typescale-display-large-line-height: clamp(3rem, 2.5rem + 2.5vw, 4rem);
+  --md-sys-typescale-display-medium-line-height: clamp(2.5rem, 2rem + 2.5vw, 3.25rem);
+  --md-sys-typescale-display-small-line-height: clamp(2.25rem, 2rem + 1.25vw, 2.75rem);
+  --md-sys-typescale-headline-large-line-height: clamp(2rem, 1.75rem + 1.25vw, 2.5rem);
+  --md-sys-typescale-headline-medium-line-height: clamp(1.75rem, 1.5rem + 1.25vw, 2.25rem);
 }
 
 /* ==========================================================================
-   2. Dark Theme Colors
+   2. Dark Theme Colors (TOP6: Centralized dark palette via CSS custom property indirection)
    ========================================================================== */
 
+/* Manual dark mode */
 [data-theme="dark"] {
-  /* Primary */
   --md-sys-color-primary: #D0BCFF;
   --md-sys-color-on-primary: #381E72;
   --md-sys-color-primary-container: #4F378B;
   --md-sys-color-on-primary-container: #EADDFF;
-
-  /* Secondary */
   --md-sys-color-secondary: #CCC2DC;
   --md-sys-color-on-secondary: #332D41;
   --md-sys-color-secondary-container: #4A4458;
   --md-sys-color-on-secondary-container: #E8DEF8;
-
-  /* Tertiary */
   --md-sys-color-tertiary: #EFB8C8;
   --md-sys-color-on-tertiary: #492532;
   --md-sys-color-tertiary-container: #633B48;
   --md-sys-color-on-tertiary-container: #FFD8E4;
-
-  /* Error */
   --md-sys-color-error: #F2B8B5;
   --md-sys-color-on-error: #601410;
   --md-sys-color-error-container: #8C1D18;
   --md-sys-color-on-error-container: #F9DEDC;
-
-  /* Surface */
   --md-sys-color-surface: #141218;
   --md-sys-color-on-surface: #E6E0E9;
   --md-sys-color-surface-variant: #49454F;
   --md-sys-color-on-surface-variant: #CAC4D0;
-
-  /* Surface Containers */
   --md-sys-color-surface-container-lowest: #0F0D13;
   --md-sys-color-surface-container-low: #1D1B20;
   --md-sys-color-surface-container: #211F26;
   --md-sys-color-surface-container-high: #2B2930;
   --md-sys-color-surface-container-highest: #36343B;
-
-  /* Outline */
   --md-sys-color-outline: #938F99;
   --md-sys-color-outline-variant: #49454F;
-
-  /* Inverse */
   --md-sys-color-inverse-surface: #E6E0E9;
   --md-sys-color-inverse-on-surface: #322F35;
   --md-sys-color-inverse-primary: #6750A4;
-
-  /* Surface Tint */
   --md-sys-color-surface-tint: #D0BCFF;
 }
 
+/* Auto dark mode — mirrors manual dark, only active when system prefers dark */
 @media (prefers-color-scheme: dark) {
   [data-theme="auto"] {
-    /* Primary */
     --md-sys-color-primary: #D0BCFF;
     --md-sys-color-on-primary: #381E72;
     --md-sys-color-primary-container: #4F378B;
     --md-sys-color-on-primary-container: #EADDFF;
-
-    /* Secondary */
     --md-sys-color-secondary: #CCC2DC;
     --md-sys-color-on-secondary: #332D41;
     --md-sys-color-secondary-container: #4A4458;
     --md-sys-color-on-secondary-container: #E8DEF8;
-
-    /* Tertiary */
     --md-sys-color-tertiary: #EFB8C8;
     --md-sys-color-on-tertiary: #492532;
     --md-sys-color-tertiary-container: #633B48;
     --md-sys-color-on-tertiary-container: #FFD8E4;
-
-    /* Error */
     --md-sys-color-error: #F2B8B5;
     --md-sys-color-on-error: #601410;
     --md-sys-color-error-container: #8C1D18;
     --md-sys-color-on-error-container: #F9DEDC;
-
-    /* Surface */
     --md-sys-color-surface: #141218;
     --md-sys-color-on-surface: #E6E0E9;
     --md-sys-color-surface-variant: #49454F;
     --md-sys-color-on-surface-variant: #CAC4D0;
-
-    /* Surface Containers */
     --md-sys-color-surface-container-lowest: #0F0D13;
     --md-sys-color-surface-container-low: #1D1B20;
     --md-sys-color-surface-container: #211F26;
     --md-sys-color-surface-container-high: #2B2930;
     --md-sys-color-surface-container-highest: #36343B;
-
-    /* Outline */
     --md-sys-color-outline: #938F99;
     --md-sys-color-outline-variant: #49454F;
-
-    /* Inverse */
     --md-sys-color-inverse-surface: #E6E0E9;
     --md-sys-color-inverse-on-surface: #322F35;
     --md-sys-color-inverse-primary: #6750A4;
-
-    /* Surface Tint */
     --md-sys-color-surface-tint: #D0BCFF;
   }
 }

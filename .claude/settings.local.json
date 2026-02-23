@@ -35,7 +35,12 @@
       "mcp__wordpress__wp_list_tags",
       "mcp__wordpress__wp_add_tag",
       "mcp__wordpress__wp_add_post",
-      "mcp__wordpress__wp_add_page"
+      "mcp__wordpress__wp_add_page",
+      "mcp__wordpress__wp_get_current_user",
+      "mcp__wordpress__wp_update_current_user",
+      "mcp__plugin_playwright_playwright__browser_close",
+      "mcp__plugin_serena_serena__write_memory",
+      "mcp__plugin_serena_serena__activate_project"
     ]
   },
   "enableAllProjectMcpServers": true,

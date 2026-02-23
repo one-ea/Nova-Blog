@@ -196,6 +196,163 @@ function flavor_customize_register($wp_customize) {
         'section' => 'flavor_about',
         'type' => 'textarea',
     ]);
+
+    // ═══════════════════════════════════════════════════════════
+    // 个性化面板
+    // ═══════════════════════════════════════════════════════════
+    $wp_customize->add_panel('flavor_personalization', [
+        'title'    => __('个性化', 'flavor'),
+        'priority' => 32,
+    ]);
+
+    // --- 1A. 字体与排版 ---
+    $wp_customize->add_section('flavor_typography', [
+        'title' => __('字体与排版', 'flavor'),
+        'panel' => 'flavor_personalization',
+    ]);
+
+    $wp_customize->add_setting('flavor_font_family', [
+        'default'           => 'system',
+        'sanitize_callback' => 'flavor_sanitize_select',
+    ]);
+    $wp_customize->add_control('flavor_font_family', [
+        'label'   => __('字体系列', 'flavor'),
+        'section' => 'flavor_typography',
+        'type'    => 'select',
+        'choices' => [
+            'system'  => __('系统默认', 'flavor'),
+            'serif'   => __('衬线体', 'flavor'),
+            'rounded' => __('圆体', 'flavor'),
+        ],
+    ]);
+
+    $wp_customize->add_setting('flavor_font_scale', [
+        'default'           => 'standard',
+        'sanitize_callback' => 'flavor_sanitize_select',
+    ]);
+    $wp_customize->add_control('flavor_font_scale', [
+        'label'   => __('字体大小', 'flavor'),
+        'section' => 'flavor_typography',
+        'type'    => 'select',
+        'choices' => [
+            'compact'  => __('紧凑', 'flavor'),
+            'standard' => __('标准', 'flavor'),
+            'large'    => __('大号', 'flavor'),
+        ],
+    ]);
+
+    // --- 1B. 视觉风格 ---
+    $wp_customize->add_section('flavor_visual', [
+        'title' => __('视觉风格', 'flavor'),
+        'panel' => 'flavor_personalization',
+    ]);
+
+    $wp_customize->add_setting('flavor_corner_style', [
+        'default'           => 'rounded',
+        'sanitize_callback' => 'flavor_sanitize_select',
+    ]);
+    $wp_customize->add_control('flavor_corner_style', [
+        'label'   => __('圆角风格', 'flavor'),
+        'section' => 'flavor_visual',
+        'type'    => 'select',
+        'choices' => [
+            'rounded' => __('圆角（默认）', 'flavor'),
+            'sharp'   => __('直角', 'flavor'),
+            'pill'    => __('胶囊', 'flavor'),
+        ],
+    ]);
+
+    $wp_customize->add_setting('flavor_card_style', [
+        'default'           => 'elevated',
+        'sanitize_callback' => 'flavor_sanitize_select',
+    ]);
+    $wp_customize->add_control('flavor_card_style', [
+        'label'   => __('卡片风格', 'flavor'),
+        'section' => 'flavor_visual',
+        'type'    => 'select',
+        'choices' => [
+            'elevated' => __('浮起（默认）', 'flavor'),
+            'outlined' => __('描边', 'flavor'),
+            'filled'   => __('填充', 'flavor'),
+        ],
+    ]);
+
+    $wp_customize->add_setting('flavor_content_density', [
+        'default'           => 'comfortable',
+        'sanitize_callback' => 'flavor_sanitize_select',
+    ]);
+    $wp_customize->add_control('flavor_content_density', [
+        'label'   => __('内容密度', 'flavor'),
+        'section' => 'flavor_visual',
+        'type'    => 'select',
+        'choices' => [
+            'comfortable' => __('舒适（默认）', 'flavor'),
+            'compact'     => __('紧凑', 'flavor'),
+            'spacious'    => __('宽松', 'flavor'),
+        ],
+    ]);
+
+    // --- 1C. 首页模块 ---
+    $wp_customize->add_section('flavor_homepage_modules', [
+        'title' => __('首页模块', 'flavor'),
+        'panel' => 'flavor_personalization',
+    ]);
+
+    $wp_customize->add_setting('flavor_show_hero', [
+        'default'           => true,
+        'sanitize_callback' => 'flavor_sanitize_checkbox',
+    ]);
+    $wp_customize->add_control('flavor_show_hero', [
+        'label'   => __('显示 Hero 区域', 'flavor'),
+        'section' => 'flavor_homepage_modules',
+        'type'    => 'checkbox',
+    ]);
+
+    $wp_customize->add_setting('flavor_show_featured', [
+        'default'           => true,
+        'sanitize_callback' => 'flavor_sanitize_checkbox',
+    ]);
+    $wp_customize->add_control('flavor_show_featured', [
+        'label'   => __('显示置顶精选文章', 'flavor'),
+        'section' => 'flavor_homepage_modules',
+        'type'    => 'checkbox',
+    ]);
+
+    $wp_customize->add_setting('flavor_show_category_filter', [
+        'default'           => true,
+        'sanitize_callback' => 'flavor_sanitize_checkbox',
+    ]);
+    $wp_customize->add_control('flavor_show_category_filter', [
+        'label'   => __('显示分类筛选标签', 'flavor'),
+        'section' => 'flavor_homepage_modules',
+        'type'    => 'checkbox',
+    ]);
+
+    // --- 1D. 动画与交互 ---
+    $wp_customize->add_section('flavor_animations', [
+        'title' => __('动画与交互', 'flavor'),
+        'panel' => 'flavor_personalization',
+    ]);
+
+    $wp_customize->add_setting('flavor_enable_animations', [
+        'default'           => true,
+        'sanitize_callback' => 'flavor_sanitize_checkbox',
+    ]);
+    $wp_customize->add_control('flavor_enable_animations', [
+        'label'   => __('启用动画效果', 'flavor'),
+        'section' => 'flavor_animations',
+        'type'    => 'checkbox',
+    ]);
+
+    $wp_customize->add_setting('flavor_enable_scroll_animations', [
+        'default'           => true,
+        'sanitize_callback' => 'flavor_sanitize_checkbox',
+    ]);
+    $wp_customize->add_control('flavor_enable_scroll_animations', [
+        'label'   => __('启用滚动动画', 'flavor'),
+        'section' => 'flavor_animations',
+        'type'    => 'checkbox',
+    ]);
 }
 add_action('customize_register', 'flavor_customize_register');
 

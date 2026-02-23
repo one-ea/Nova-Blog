@@ -3,13 +3,15 @@
  * - Reading progress bar (single post pages)
  * - Scroll-in reveal animations (IntersectionObserver)
  * - Auto-applies .scroll-in to key elements (zero template changes)
+ * - Reads flavorConfig for animation toggle control
  */
 (function () {
   'use strict';
 
+  var config = window.flavorConfig || {};
   var prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // --- Reading Progress Bar ---
+  // --- Reading Progress Bar (functional UI, unaffected by animation toggles) ---
   var progressContainer = document.querySelector('.reading-progress');
   if (progressContainer) {
     var progressBar = progressContainer.querySelector('.reading-progress__bar');
@@ -31,7 +33,12 @@
   }
 
   // --- Scroll-in Reveal Animation ---
+  // Guard 1: system prefers-reduced-motion
   if (prefersReducedMotion) return;
+  // Guard 2: global animation toggle
+  if (config.enableAnimations === false) return;
+  // Guard 3: scroll animation sub-toggle
+  if (config.enableScrollAnimations === false) return;
 
   // Auto-apply .scroll-in to key content elements
   var autoSelectors = [

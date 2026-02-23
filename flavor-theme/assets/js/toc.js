@@ -78,7 +78,6 @@
       const indent = heading.level - minLevel;
       const li = document.createElement('li');
       li.className = `toc-item toc-item--level-${indent}`;
-      li.style.paddingLeft = `${indent * 16}px`;
 
       const link = document.createElement('a');
       link.className = 'toc-link';

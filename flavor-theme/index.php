@@ -6,6 +6,7 @@ get_header();
 <div class="container content-area">
 
     <?php if (is_home() && !is_paged()) : ?>
+    <?php if (get_theme_mod('flavor_show_hero', true)) : ?>
     <!-- Hero Section -->
     <section class="hero-section">
         <div class="hero-blobs" aria-hidden="true">
@@ -51,7 +52,9 @@ get_header();
         </div>
         <?php endif; ?>
     </section>
+    <?php endif; ?>
 
+    <?php if (get_theme_mod('flavor_show_featured', true)) : ?>
     <?php
     // 置顶文章
     $sticky = get_option('sticky_posts');
@@ -73,7 +76,9 @@ get_header();
         endif;
     endif;
     ?>
+    <?php endif; ?>
 
+    <?php if (get_theme_mod('flavor_show_category_filter', true)) : ?>
     <!-- Category Filter Chips -->
     <div class="category-chips">
         <a href="<?php echo esc_url(home_url('/')); ?>" class="md-chip-filter <?php echo !is_category() ? 'md-chip-filter--selected' : ''; ?>">
@@ -88,6 +93,7 @@ get_header();
         </a>
         <?php endforeach; ?>
     </div>
+    <?php endif; ?>
     <?php endif; ?>
 
     <!-- Posts: 1-2-3 Column Layout -->

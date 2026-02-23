@@ -2,7 +2,7 @@
 // M3 Elevated Card 样式的文章卡片
 // 结构：封面图/占位 -> 分类 Chip -> 标题 -> 摘要 -> 作者头像+名字+日期
 ?>
-<article id="post-<?php the_ID(); ?>" <?php post_class('md-card-elevated post-card md-ripple'); ?>>
+<article id="post-<?php the_ID(); ?>" <?php post_class(flavor_card_class() . ' post-card md-ripple'); ?>>
     <a href="<?php the_permalink(); ?>" class="post-card__link" aria-label="<?php the_title_attribute(); ?>">
 
         <?php if (has_post_thumbnail()) : ?>
