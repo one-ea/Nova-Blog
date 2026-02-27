@@ -23,7 +23,7 @@ add_action('after_setup_theme', function () {
 }, 1);
 
 // 主题常量
-define('FLAVOR_VERSION', '2.18.0');
+define('FLAVOR_VERSION', '2.20.0');
 define('FLAVOR_DIR', get_template_directory());
 define('FLAVOR_URI', get_template_directory_uri());
 

@@ -107,6 +107,7 @@
 .app-bar.scrolled {
   box-shadow: var(--md-sys-elevation-level-2);
   background-color: var(--md-sys-color-surface-container);
+  background-image: linear-gradient(var(--md-sys-elevation-tint-2), var(--md-sys-elevation-tint-2));
 }
 
 .app-bar__menu-btn {
@@ -219,6 +220,7 @@
   width: 360px;
   max-width: calc(100vw - 56px);
   background-color: var(--md-sys-color-surface-container-low);
+  background-image: linear-gradient(var(--md-sys-elevation-tint-1), var(--md-sys-elevation-tint-1));
   transform: translateX(-100%);
   transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
   z-index: 201;
@@ -523,6 +525,7 @@
   position: fixed;
   inset: 0;
   background-color: var(--md-sys-color-surface);
+  background-image: linear-gradient(var(--md-sys-elevation-tint-3), var(--md-sys-elevation-tint-3));
   z-index: 300;
   display: flex;
   flex-direction: column;
@@ -582,7 +585,8 @@
   border-bottom: none;
   border-radius: var(--md-sys-shape-corner-large, 16px);
   overflow: hidden;
-  background: var(--md-sys-color-surface-container-low);
+  background-color: var(--md-sys-color-surface-container-low);
+  background-image: linear-gradient(var(--md-sys-elevation-tint-1), var(--md-sys-elevation-tint-1));
 }
 
 .posts-hero .post-card__link {
@@ -683,17 +687,45 @@
 .post-card {
   text-decoration: none;
   color: inherit;
-  border-bottom: 1px solid var(--md-sys-color-outline-variant);
+  position: relative;
+  border-bottom: 1px solid color-mix(in srgb, var(--md-sys-color-outline-variant) 60%, transparent);
   container-type: inline-size;
+  background-image: linear-gradient(var(--md-sys-elevation-tint-1), var(--md-sys-elevation-tint-1));
   transition: box-shadow var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
               border-color var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
+              background-image var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
               transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
+}
+
+/* State Layer — M3 interactive surface overlay */
+.post-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--md-sys-color-on-surface);
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.post-card:hover::before {
+  opacity: var(--md-sys-state-hover-state-layer-opacity);
+}
+
+.post-card:focus-within::before {
+  opacity: var(--md-sys-state-focus-state-layer-opacity);
+}
+
+.post-card:active::before {
+  opacity: var(--md-sys-state-pressed-state-layer-opacity);
 }
 
 .post-card:hover {
   box-shadow: var(--md-sys-elevation-level-2);
   border-color: transparent;
-  transform: translateY(-2px);
+  background-image: linear-gradient(var(--md-sys-elevation-tint-2), var(--md-sys-elevation-tint-2));
+  transform: translateY(-1px);
 }
 
 .post-card__link {
@@ -943,7 +975,7 @@
   position: relative;
   min-height: 280px;
   text-decoration: none !important;
-  color: #fff;
+  color: var(--md-sys-color-on-scrim);
 }
 
 /* 图片背景 */
@@ -978,9 +1010,9 @@
   z-index: 1;
   background: linear-gradient(
     to top,
-    rgba(0, 0, 0, 0.7) 0%,
-    rgba(0, 0, 0, 0.3) 50%,
-    rgba(0, 0, 0, 0.1) 100%
+    color-mix(in srgb, var(--md-sys-color-scrim) 70%, transparent) 0%,
+    color-mix(in srgb, var(--md-sys-color-scrim) 30%, transparent) 50%,
+    color-mix(in srgb, var(--md-sys-color-scrim) 10%, transparent) 100%
   );
 }
 
@@ -996,7 +1028,7 @@
 }
 
 .featured-card__overlay h2 {
-  color: #fff;
+  color: var(--md-sys-color-on-scrim);
   margin: 8px 0;
   font-size: var(--md-sys-typescale-headline-large-size);
   font-weight: var(--md-sys-typescale-headline-large-weight);
@@ -1004,7 +1036,7 @@
 }
 
 .featured-card__overlay p {
-  color: rgba(255, 255, 255, 0.85);
+  color: color-mix(in srgb, var(--md-sys-color-on-scrim) 85%, transparent);
   margin: 0 0 16px;
   max-width: 600px;
 }
@@ -1022,18 +1054,18 @@
 }
 
 .featured-card__author {
-  color: #fff;
+  color: var(--md-sys-color-on-scrim);
   font-size: var(--md-sys-typescale-label-large-size);
   font-weight: var(--md-sys-typescale-label-large-weight);
 }
 
 .featured-card__date {
-  color: rgba(255, 255, 255, 0.7);
+  color: color-mix(in srgb, var(--md-sys-color-on-scrim) 70%, transparent);
   font-size: var(--md-sys-typescale-label-medium-size);
 }
 
 .featured-card__separator {
-  color: rgba(255, 255, 255, 0.5);
+  color: color-mix(in srgb, var(--md-sys-color-on-scrim) 50%, transparent);
 }
 
 /* hover 效果：图片微放大 */
@@ -1085,11 +1117,37 @@
   font-weight: var(--md-sys-typescale-label-large-weight);
   color: var(--md-sys-color-on-surface);
   text-decoration: none;
-  transition: background-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  position: relative;
+  overflow: hidden;
+  transition: color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+/* State Layer for pagination links */
+.pagination .page-numbers a::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background-color: var(--md-sys-color-on-surface);
+  opacity: 0;
+  transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  pointer-events: none;
+}
+
+.pagination .page-numbers a:hover::before {
+  opacity: var(--md-sys-state-hover-state-layer-opacity);
+}
+
+.pagination .page-numbers a:focus-visible::before {
+  opacity: var(--md-sys-state-focus-state-layer-opacity);
+}
+
+.pagination .page-numbers a:active::before {
+  opacity: var(--md-sys-state-pressed-state-layer-opacity);
 }
 
 .pagination .page-numbers a:hover {
-  background-color: var(--md-sys-color-surface-container-highest);
+  text-decoration: none;
 }
 
 .pagination .page-numbers .current {
@@ -1331,6 +1389,7 @@
   position: sticky;
   top: 80px;
   background-color: var(--md-sys-color-surface-container-low);
+  background-image: linear-gradient(var(--md-sys-elevation-tint-1), var(--md-sys-elevation-tint-1));
   border-radius: var(--md-sys-shape-corner-large);
   padding: 16px;
   max-height: calc(100vh - 120px);
@@ -1685,6 +1744,7 @@
 .site-footer {
   margin-top: 64px;
   background-color: var(--md-sys-color-surface-container);
+  background-image: linear-gradient(var(--md-sys-elevation-tint-2), var(--md-sys-elevation-tint-2));
   position: relative;
 }
 
