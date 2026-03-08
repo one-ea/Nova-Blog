@@ -165,6 +165,13 @@
 
     // Share
     initShare();
+
+    // Bottom navigation (mobile)
+    document.getElementById('bottom-nav-search')?.addEventListener('click', openSearch);
+    document.getElementById('bottom-nav-menu')?.addEventListener('click', openDrawer);
+    document.getElementById('bottom-nav-top')?.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   };
 
   if (document.readyState === 'loading') {

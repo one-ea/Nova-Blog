@@ -1,6 +1,16 @@
-.mcp.json
+# Ignore everything by default
+/*
+
+# Track these
+!flavor-theme/
+!.claude/
+!.github/
+!.gitignore
+!README.md
+!LICENSE
+
+# Ignore within tracked folders
+flavor-theme/node_modules/
 *.zip
-node_modules/
+*.map
 .DS_Store
-firebase-debug.log
-.playwright-mcp/

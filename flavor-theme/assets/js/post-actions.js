@@ -5,6 +5,22 @@
 (function () {
   'use strict';
 
+  /* ── Snackbar Helper ─────────────────────────── */
+
+  function showSnackbar(message, duration) {
+    duration = duration || 2000;
+    var container = document.querySelector('.snackbar-container');
+    if (!container) return;
+    var snackbar = document.createElement('div');
+    snackbar.className = 'snackbar snackbar--show';
+    snackbar.textContent = message;
+    container.appendChild(snackbar);
+    setTimeout(function () {
+      snackbar.classList.remove('snackbar--show');
+      setTimeout(function () { snackbar.remove(); }, 300);
+    }, duration);
+  }
+
   /* ── Like Button ────────────────────────────────── */
 
   const likeBtn = document.querySelector('.post-like-btn');
@@ -26,6 +42,7 @@
       likeBtn.classList.add('is-liked', 'like-animate');
       if (iconEl) iconEl.setAttribute('fill', 'var(--md-sys-color-error)');
       localStorage.setItem(storageKey, '1');
+      showSnackbar('已点赞 ♥');
 
       // Remove animation class after it completes
       likeBtn.addEventListener('animationend', function handler() {
@@ -173,18 +190,7 @@
     // Copy link
     dialog.querySelector('.share-copy-btn').addEventListener('click', function () {
       navigator.clipboard.writeText(url).then(function () {
-        // Show snackbar
-        var container = document.querySelector('.snackbar-container');
-        if (container) {
-          var snackbar = document.createElement('div');
-          snackbar.className = 'snackbar snackbar--show';
-          snackbar.textContent = '\u94fe\u63a5\u5df2\u590d\u5236';
-          container.appendChild(snackbar);
-          setTimeout(function () {
-            snackbar.classList.remove('snackbar--show');
-            setTimeout(function () { snackbar.remove(); }, 300);
-          }, 2000);
-        }
+        showSnackbar('链接已复制');
         closeDialog();
       });
     });

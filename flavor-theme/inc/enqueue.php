@@ -36,10 +36,15 @@ function flavor_enqueue_scripts() {
         'enableScrollAnimations' => (bool) get_theme_mod('flavor_enable_scroll_animations', true),
     ]);
 
-    // 文章页加载 TOC + 代码复制 + 交互按钮
+    // 文章页加载 TOC + 代码复制 + 语法高亮 + 交互按钮
     if (is_single()) {
         wp_enqueue_script('flavor-toc', flavor_asset_uri('js/toc.js'), [], FLAVOR_VERSION, ['strategy' => 'defer', 'in_footer' => true]);
         wp_enqueue_script('flavor-copy-code', flavor_asset_uri('js/copy-code.js'), [], FLAVOR_VERSION, ['strategy' => 'defer', 'in_footer' => true]);
+
+        // Prism.js 语法高亮（core ~6KB + autoloader ~2KB gzipped）
+        wp_enqueue_style('prism-m3', flavor_asset_uri('css/prism-m3.css'), [], FLAVOR_VERSION);
+        wp_enqueue_script('prism-core', 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js', [], '1.29.0', ['strategy' => 'defer', 'in_footer' => true]);
+        wp_enqueue_script('prism-autoloader', 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js', ['prism-core'], '1.29.0', ['strategy' => 'defer', 'in_footer' => true]);
         wp_enqueue_script('flavor-post-actions', flavor_asset_uri('js/post-actions.js'), [], FLAVOR_VERSION, ['strategy' => 'defer', 'in_footer' => true]);
         wp_localize_script('flavor-post-actions', 'flavorPostActions', [
             'ajaxUrl' => admin_url('admin-ajax.php'),
@@ -71,6 +76,7 @@ function flavor_preload_assets() {
     // DNS 预解析外部资源
     echo '<link rel="dns-prefetch" href="//fonts.googleapis.com">' . "\n";
     echo '<link rel="dns-prefetch" href="//fonts.gstatic.com">' . "\n";
+    echo '<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">' . "\n";
     // 预加载 Roboto（自托管）
     echo '<link rel="preload" href="' . FLAVOR_URI . '/assets/fonts/roboto-latin.woff2" as="font" type="font/woff2" crossorigin>' . "\n";
     // 异步加载 Noto Sans SC + Playfair Display（品牌展示字体）+ 个性化字体

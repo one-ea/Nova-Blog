@@ -104,6 +104,34 @@
 <!-- Snackbar Container -->
 <div class="snackbar-container" aria-live="polite"></div>
 
+<!-- Bottom Navigation (Mobile only, hidden via CSS on ≥600px) -->
+<nav class="md-navigation-bar bottom-nav" aria-label="<?php esc_attr_e('底部导航', 'flavor'); ?>">
+    <a href="<?php echo esc_url(home_url('/')); ?>" class="md-navigation-bar__item<?php echo is_front_page() ? ' md-navigation-bar__item--active' : ''; ?>">
+        <span class="md-navigation-bar__icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </span>
+        <span class="md-navigation-bar__label"><?php esc_html_e('首页', 'flavor'); ?></span>
+    </a>
+    <button class="md-navigation-bar__item" id="bottom-nav-search" type="button">
+        <span class="md-navigation-bar__icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </span>
+        <span class="md-navigation-bar__label"><?php esc_html_e('搜索', 'flavor'); ?></span>
+    </button>
+    <button class="md-navigation-bar__item" id="bottom-nav-menu" type="button">
+        <span class="md-navigation-bar__icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </span>
+        <span class="md-navigation-bar__label"><?php esc_html_e('菜单', 'flavor'); ?></span>
+    </button>
+    <button class="md-navigation-bar__item" id="bottom-nav-top" type="button">
+        <span class="md-navigation-bar__icon">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>
+        </span>
+        <span class="md-navigation-bar__label"><?php esc_html_e('顶部', 'flavor'); ?></span>
+    </button>
+</nav>
+
 <?php wp_footer(); ?>
 </body>
 </html>

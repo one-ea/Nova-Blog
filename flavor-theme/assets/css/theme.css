@@ -184,6 +184,20 @@
   font-weight: 600;
 }
 
+/* M3 Navigation active indicator — pill-shaped bottom bar */
+.app-bar__nav-link.current-menu-item::after,
+.app-bar__nav-link[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 3px;
+  border-radius: var(--md-sys-shape-corner-full);
+  background-color: var(--md-sys-color-primary);
+}
+
 .app-bar__spacer {
   flex: 1;
 }
@@ -531,13 +545,19 @@
   flex-direction: column;
   opacity: 0;
   visibility: hidden;
-  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
-              visibility var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard);
+  transform: translateY(-8px) scale(0.98);
+  transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized-accelerate),
+              visibility var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized-accelerate),
+              transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized-accelerate);
 }
 
 .search-overlay.open {
   opacity: 1;
   visibility: visible;
+  transform: translateY(0) scale(1);
+  transition: opacity var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized-decelerate),
+              visibility var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized-decelerate),
+              transform var(--md-sys-motion-duration-medium4) var(--md-sys-motion-easing-emphasized-decelerate);
 }
 
 .search-overlay__bar {
@@ -572,6 +592,16 @@
   flex: 1;
   padding: 16px 24px;
   overflow-y: auto;
+  /* Scroll shadow — vertical */
+  background:
+    /* top cover */
+    linear-gradient(to bottom, var(--md-sys-color-surface-container-high) 30%, transparent) top center / 100% 40px no-repeat local,
+    /* bottom cover */
+    linear-gradient(to top, var(--md-sys-color-surface-container-high) 30%, transparent) bottom center / 100% 40px no-repeat local,
+    /* top shadow */
+    radial-gradient(farthest-side at 50% 0, color-mix(in srgb, var(--md-sys-color-shadow) 12%, transparent), transparent) top center / 100% 14px no-repeat scroll,
+    /* bottom shadow */
+    radial-gradient(farthest-side at 50% 100%, color-mix(in srgb, var(--md-sys-color-shadow) 12%, transparent), transparent) bottom center / 100% 14px no-repeat scroll;
 }
 
 /* === Posts Layout: 1-2-3 Column System === */
@@ -779,17 +809,64 @@
   justify-content: center;
   background:
     linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in srgb, var(--md-sys-color-surface-container) 60%, transparent) 50%,
+      transparent 100%
+    ) -200% 0 / 200% 100% no-repeat,
+    linear-gradient(
       135deg,
       color-mix(in srgb, var(--md-sys-color-primary-container) 70%, var(--md-sys-color-surface-container-highest)),
       color-mix(in srgb, var(--md-sys-color-tertiary-container) 60%, var(--md-sys-color-surface-container-highest))
     );
   color: var(--md-sys-color-on-primary-container);
+  position: relative;
+  overflow: hidden;
+  animation: skeleton-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes skeleton-shimmer {
+  0%   { background-position: -200% 0, 0 0; }
+  100% { background-position: 200% 0, 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-card__placeholder {
+    animation: none;
+  }
+}
+
+/* Decorative circle accent */
+.post-card__placeholder::before {
+  content: '';
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--md-sys-color-primary) 8%, transparent);
+  top: -40px;
+  right: -40px;
+  pointer-events: none;
+}
+
+.post-card__placeholder::after {
+  content: '';
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--md-sys-color-tertiary) 6%, transparent);
+  bottom: -20px;
+  left: -20px;
+  pointer-events: none;
 }
 
 .post-card__placeholder svg {
-  width: 48px;
-  height: 48px;
-  opacity: 0.5;
+  width: 40px;
+  height: 40px;
+  opacity: 0.3;
+  position: relative;
+  z-index: 1;
 }
 
 .post-card__categories {
@@ -1216,9 +1293,7 @@
   font-weight: var(--md-sys-typescale-title-medium-weight);
   color: var(--md-sys-color-on-surface);
   margin-bottom: 16px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid var(--md-sys-color-primary);
-  display: inline-block;
+  letter-spacing: var(--md-sys-typescale-title-medium-tracking);
 }
 
 .footer-default__description {
@@ -1571,12 +1646,13 @@
   justify-content: center;
   pointer-events: none;
   opacity: 0;
-  transition: opacity var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);
+  transition: opacity 200ms cubic-bezier(0.3, 0.0, 0.8, 0.15);
 }
 
 .share-dialog.is-open {
   pointer-events: auto;
   opacity: 1;
+  transition: opacity 300ms cubic-bezier(0.05, 0.7, 0.1, 1.0);
 }
 
 .share-dialog__scrim {
@@ -1595,11 +1671,12 @@
   width: 100%;
   max-width: 480px;
   transform: translateY(100%);
-  transition: transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
+  transition: transform 200ms cubic-bezier(0.3, 0.0, 0.8, 0.15);
 }
 
 .share-dialog.is-open .share-dialog__surface {
   transform: translateY(0);
+  transition: transform 300ms cubic-bezier(0.05, 0.7, 0.1, 1.0);
 }
 
 .share-dialog__title {
@@ -1742,21 +1819,21 @@
 /* === Footer === */
 
 .site-footer {
-  margin-top: 64px;
+  margin-top: 0;
   background-color: var(--md-sys-color-surface-container);
   background-image: linear-gradient(var(--md-sys-elevation-tint-2), var(--md-sys-elevation-tint-2));
   position: relative;
 }
 
-/* Gradient accent line at footer top */
+/* M3 Divider: outline-variant replaces gradient accent line */
 .site-footer::before {
   content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--md-sys-color-primary), var(--md-sys-color-tertiary));
+  height: 1px;
+  background-color: var(--md-sys-color-outline-variant);
 }
 
 .footer-widgets {
@@ -1823,12 +1900,19 @@ button.back-to-top {
   bottom: 24px;
   right: 24px;
   z-index: 50;
+  /* M3: tertiary-container for secondary utility actions */
+  background-color: var(--md-sys-color-tertiary-container);
+  color: var(--md-sys-color-on-tertiary-container);
   opacity: 0;
   visibility: hidden;
   transform: scale(0.8);
   transition: opacity var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
               visibility var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard),
               transform var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-emphasized);
+}
+
+button.back-to-top::before {
+  background-color: var(--md-sys-color-on-tertiary-container);
 }
 
 button.back-to-top.visible {
@@ -2360,15 +2444,13 @@ button.back-to-top.visible {
   margin-top: 24px;
 }
 
-/* Comment form outlined fields — context-specific adjustments */
+/* Comment form outlined fields — align with M3 Outlined TextField spec */
 .comment-form .md-text-field--outlined {
-  border-radius: var(--md-sys-shape-corner-small);
-  transition: border-color var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+  border-radius: var(--md-sys-shape-corner-extra-small);
 }
 
 .comment-form .md-text-field--outlined:focus {
   outline: none;
-  box-shadow: 0 0 0 1px var(--md-sys-color-primary);
 }
 
 .comment-form .form-submit .md-button-filled {
@@ -2857,6 +2939,40 @@ button.back-to-top.visible {
   display: none;
 }
 
+/* --- Ripple Color Contextualization (M3) --- */
+
+/* Post card: surface context → on-surface ripple */
+.post-card.md-ripple,
+.featured-card.md-ripple {
+  --md-ripple-color: var(--md-sys-color-on-surface);
+}
+
+/* Nav drawer links: surface-variant context */
+.nav-drawer a.md-ripple {
+  --md-ripple-color: var(--md-sys-color-on-surface-variant);
+}
+
+/* App bar actions: surface context */
+.md-top-app-bar__action.md-ripple {
+  --md-ripple-color: var(--md-sys-color-on-surface-variant);
+}
+
+/* FAB (tertiary-container): on-tertiary-container ripple */
+.md-fab.md-ripple {
+  --md-ripple-color: var(--md-sys-color-on-tertiary-container);
+}
+
+/* Social links: surface-variant context */
+.hero-social-link.md-ripple,
+.author-social-link.md-ripple {
+  --md-ripple-color: var(--md-sys-color-on-surface-variant);
+}
+
+/* Error page card items */
+.error-page__recent-item.md-ripple {
+  --md-ripple-color: var(--md-sys-color-on-surface);
+}
+
 /* --- 4D. Card Style Overrides (fallback for body-class approach) --- */
 
 .cards-outlined .md-card-elevated {
@@ -2885,4 +3001,36 @@ button.back-to-top.visible {
   background: var(--md-sys-color-surface-container-highest);
   border-radius: var(--md-sys-shape-corner-medium);
   overflow: hidden;
+}
+
+/* ==========================================================================
+   Bottom Navigation Bar (Mobile ≤599px)
+   components.css defines .md-navigation-bar base styles;
+   this section handles visibility, body padding, and FAB offset.
+   ========================================================================== */
+
+/* Hidden by default (desktop/tablet) */
+.bottom-nav {
+  display: none;
+}
+
+@media (max-width: 599px) {
+  .bottom-nav {
+    display: flex;
+  }
+
+  /* Compensate for fixed bottom nav height */
+  body {
+    padding-bottom: 80px;
+  }
+
+  /* Move FAB above bottom nav */
+  .back-to-top {
+    bottom: 96px;
+  }
+
+  /* Move snackbar above bottom nav */
+  .snackbar-container {
+    bottom: 96px;
+  }
 }

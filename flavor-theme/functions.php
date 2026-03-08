@@ -23,7 +23,7 @@ add_action('after_setup_theme', function () {
 }, 1);
 
 // 主题常量
-define('FLAVOR_VERSION', '2.20.0');
+define('FLAVOR_VERSION', '2.24.0');
 define('FLAVOR_DIR', get_template_directory());
 define('FLAVOR_URI', get_template_directory_uri());
 
@@ -420,6 +420,49 @@ function flavor_sw_output() {
     exit;
 }
 add_action('template_redirect', 'flavor_sw_output', 0);
+
+// ─── 代码块增强：注入 data-lang 属性 + Prism class ────────
+function flavor_code_block_enhance($content) {
+    if (!is_single() || empty($content)) return $content;
+
+    // 语言标签美化映射
+    static $labels = [
+        'php' => 'PHP', 'js' => 'JavaScript', 'javascript' => 'JavaScript',
+        'ts' => 'TypeScript', 'typescript' => 'TypeScript',
+        'css' => 'CSS', 'html' => 'HTML', 'xml' => 'XML',
+        'python' => 'Python', 'py' => 'Python',
+        'bash' => 'Shell', 'shell' => 'Shell', 'sh' => 'Shell',
+        'json' => 'JSON', 'sql' => 'SQL', 'yaml' => 'YAML', 'yml' => 'YAML',
+        'java' => 'Java', 'c' => 'C', 'cpp' => 'C++', 'csharp' => 'C#',
+        'go' => 'Go', 'rust' => 'Rust', 'ruby' => 'Ruby',
+        'swift' => 'Swift', 'kotlin' => 'Kotlin', 'dart' => 'Dart',
+        'lua' => 'Lua', 'r' => 'R', 'scss' => 'SCSS', 'sass' => 'Sass',
+        'less' => 'LESS', 'markdown' => 'Markdown', 'md' => 'Markdown',
+        'jsx' => 'JSX', 'tsx' => 'TSX', 'graphql' => 'GraphQL',
+        'docker' => 'Docker', 'nginx' => 'Nginx', 'apache' => 'Apache',
+    ];
+
+    return preg_replace_callback(
+        '/<pre([^>]*)>(\s*)<code([^>]*)class="([^"]*\blanguage-(\w[\w-]*)[^"]*)"/',
+        function ($m) use ($labels) {
+            $pre_attrs = $m[1];
+            $ws        = $m[2];
+            $code_attrs = $m[3];
+            $code_class = $m[4];
+            $lang_raw  = strtolower($m[5]);
+
+            // 已有 data-lang 则跳过
+            if (strpos($pre_attrs, 'data-lang') !== false) return $m[0];
+
+            $label = $labels[$lang_raw] ?? strtoupper($lang_raw);
+
+            return '<pre' . $pre_attrs . ' data-lang="' . esc_attr($label) . '">'
+                 . $ws . '<code' . $code_attrs . 'class="' . $code_class . '"';
+        },
+        $content
+    );
+}
+add_filter('the_content', 'flavor_code_block_enhance', 20);
 
 // 离线 fallback 路由
 function flavor_offline_rewrite() {

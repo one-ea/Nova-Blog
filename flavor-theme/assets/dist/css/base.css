@@ -3,33 +3,19 @@
   navigation: auto;
 }
 
-::view-transition-old(root) {
-  animation: fade-out 0.15s ease-in;
+/* 防止过渡间隙透出白底（深色模式关键） */
+::view-transition {
+  background-color: var(--md-sys-color-surface);
 }
 
+/* Root 使用浏览器默认 cross-fade，仅覆盖时长和缓动 */
+::view-transition-old(root),
 ::view-transition-new(root) {
-  animation: fade-in 0.2s ease-out;
-}
-
-@keyframes fade-out {
-  from { opacity: 1; }
-  to   { opacity: 0; }
-}
-
-@keyframes fade-in {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  animation-duration: var(--md-sys-motion-duration-medium2);
+  animation-timing-function: var(--md-sys-motion-easing-standard);
 }
 
 /* Named transition for page content area */
-::view-transition-old(main-content) {
-  animation: slide-out 0.2s ease-in;
-}
-
-::view-transition-new(main-content) {
-  animation: slide-in 0.25s ease-out;
-}
-
 @keyframes slide-out {
   from { opacity: 1; transform: translateY(0); }
   to   { opacity: 0; transform: translateY(-8px); }
@@ -38,6 +24,14 @@
 @keyframes slide-in {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+::view-transition-old(main-content) {
+  animation: slide-out var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard) both;
+}
+
+::view-transition-new(main-content) {
+  animation: slide-in var(--md-sys-motion-duration-medium2) var(--md-sys-motion-easing-standard) both;
 }
 
 /* === Self-hosted Fonts === */
@@ -65,8 +59,8 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  -moz-tab-size: 4;
-  tab-size: 4;
+  -moz-tab-size: 2;
+  tab-size: 2;
   scroll-behavior: smooth;
 }
 
@@ -283,6 +277,18 @@ pre {
   overflow-x: auto;
   margin-bottom: 1rem;
   position: relative;
+  /* Scroll shadow — horizontal */
+  background:
+    /* left cover (local: scrolls with content) */
+    linear-gradient(to right, var(--md-sys-color-surface-container-highest) 30%, transparent) left center / 40px 100% no-repeat local,
+    /* right cover */
+    linear-gradient(to left, var(--md-sys-color-surface-container-highest) 30%, transparent) right center / 40px 100% no-repeat local,
+    /* left shadow (scroll: fixed to edge) */
+    radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent), transparent) left center / 14px 100% no-repeat scroll,
+    /* right shadow */
+    radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--md-sys-color-shadow) 15%, transparent), transparent) right center / 14px 100% no-repeat scroll,
+    /* base background */
+    var(--md-sys-color-surface-container-highest);
 }
 
 /* Code block language label */
@@ -305,6 +311,8 @@ pre[data-lang]::before {
 pre code {
   background: none;
   padding: 0;
+  color: inherit;
+  font-size: inherit;
 }
 
 /* Copy code button */
@@ -325,6 +333,11 @@ pre code {
   opacity: 0;
   transition: opacity 0.2s, background-color 0.2s, color 0.2s;
   z-index: 1;
+}
+
+/* 有 language label 时，copy button 下移避开 label */
+pre[data-lang] .copy-code-btn {
+  top: 32px;
 }
 
 pre:hover .copy-code-btn,
@@ -643,17 +656,6 @@ figcaption {
   margin-right: auto;
 }
 
-/* === View Transitions === */
-@view-transition {
-  navigation: auto;
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: var(--md-sys-motion-duration-medium2);
-  animation-timing-function: var(--md-sys-motion-easing-standard);
-}
-
 /* === Print Styles === */
 @media print {
   *,
@@ -714,10 +716,7 @@ figcaption {
   }
 }
 
-/* === View Transitions（渐进增强） === */
-@view-transition {
-  navigation: auto;
-}
+/* === View Transition 元素命名（渐进增强） === */
 
 /* 关键元素命名 — 浏览器在页面切换时自动创建快照过渡 */
 .site-header {
@@ -734,10 +733,10 @@ figcaption {
   view-transition-name: featured-image;
 }
 
-/* 过渡动画自定义 */
+/* 各元素过渡时长 */
 ::view-transition-old(site-header),
 ::view-transition-new(site-header) {
-  animation-duration: 0.25s;
+  animation-duration: var(--md-sys-motion-duration-medium2);
 }
 
 ::view-transition-old(featured-image),
