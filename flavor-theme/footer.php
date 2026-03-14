@@ -133,5 +133,7 @@
 </nav>
 
 <?php wp_footer(); ?>
+    </div><!-- .md3-layout-main -->
+</div><!-- .md3-layout-wrapper -->
 </body>
 </html>

@@ -96,41 +96,13 @@ get_header();
     <?php endif; ?>
     <?php endif; ?>
 
-    <!-- Posts: 1-2-3 Column Layout -->
+    <!-- Document List Layout -->
     <?php if (have_posts()) : ?>
-    <?php $total_posts = $wp_query->post_count; ?>
-
-    <?php if ($total_posts >= 4) : ?>
-        <!-- Hero: 单列全宽 -->
-        <?php the_post(); ?>
-        <div class="posts-hero">
+    <div class="doc-list">
+        <?php while (have_posts()) : the_post(); ?>
             <?php get_template_part('template-parts/content', 'card'); ?>
-        </div>
-
-        <!-- Duo: 双列 -->
-        <div class="posts-duo">
-            <?php for ($i = 0; $i < 2 && have_posts(); $i++) : the_post(); ?>
-                <?php get_template_part('template-parts/content', 'card'); ?>
-            <?php endfor; ?>
-        </div>
-
-        <!-- Grid: 三列 -->
-        <?php if (have_posts()) : ?>
-        <div class="posts-grid">
-            <?php while (have_posts()) : the_post(); ?>
-                <?php get_template_part('template-parts/content', 'card'); ?>
-            <?php endwhile; ?>
-        </div>
-        <?php endif; ?>
-
-    <?php else : ?>
-        <!-- 文章较少时使用自适应网格 -->
-        <div class="posts-grid">
-            <?php while (have_posts()) : the_post(); ?>
-                <?php get_template_part('template-parts/content', 'card'); ?>
-            <?php endwhile; ?>
-        </div>
-    <?php endif; ?>
+        <?php endwhile; ?>
+    </div>
 
     <!-- Pagination -->
     <nav class="pagination" aria-label="<?php esc_attr_e('文章导航', 'flavor'); ?>">

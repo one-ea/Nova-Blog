@@ -137,7 +137,7 @@ while (have_posts()) : the_post();
             ?>
             <section class="related-posts">
                 <h2 class="related-posts__title"><?php esc_html_e('相关文章', 'flavor'); ?></h2>
-                <div class="related-posts__grid">
+                <div class="doc-list">
                     <?php while ($related->have_posts()) : $related->the_post(); ?>
                         <?php get_template_part('template-parts/content', 'card'); ?>
                     <?php endwhile; wp_reset_postdata(); ?>
